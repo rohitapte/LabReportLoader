@@ -5,12 +5,34 @@
  */
 package com.biornaquantics.labreportloader;
 
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+import javax.swing.ImageIcon;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.filechooser.FileFilter;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.table.DefaultTableModel;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.rendering.PDFRenderer;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.ParseException;
+
 /**
  *
  * @author tihor
  */
 public class BQLabReportImporter extends javax.swing.JFrame {
-
+    int currentPage=0;
+    PDDocument document=null;
+    PDFRenderer renderer=null;
+    private float RENDER_DPI=200;
     /**
      * Creates new form BQLabReportImporter
      */
@@ -44,14 +66,27 @@ public class BQLabReportImporter extends javax.swing.JFrame {
         jButtonUpload = new javax.swing.JButton();
         jLabelDateCollected = new javax.swing.JLabel();
         jTextFieldDateCollected = new javax.swing.JTextField();
+        jButtonToCSV = new javax.swing.JButton();
         jScrollPanePDF = new javax.swing.JScrollPane();
         jTablePDF = new javax.swing.JTable();
         jToolBarLoaderButtons = new javax.swing.JToolBar();
         jButtonCMEP = new javax.swing.JButton();
         jButton1 = new javax.swing.JButton();
         jLabelStatus = new javax.swing.JLabel();
+        jMenuBarMainMenu = new javax.swing.JMenuBar();
+        jMenuFile = new javax.swing.JMenu();
+        jMenuItemExit = new javax.swing.JMenuItem();
+        jMenuEdit = new javax.swing.JMenu();
+        jMenuLabReports = new javax.swing.JMenu();
+        jMenuItemCMEP = new javax.swing.JMenuItem();
+        jMenuItemIgG4 = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        addComponentListener(new java.awt.event.ComponentAdapter() {
+            public void componentResized(java.awt.event.ComponentEvent evt) {
+                formComponentResized(evt);
+            }
+        });
 
         jPanelMain.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         jPanelMain.setLayout(new java.awt.GridLayout(1, 2));
@@ -66,12 +101,22 @@ public class BQLabReportImporter extends javax.swing.JFrame {
         jButtonFirst.setFocusable(false);
         jButtonFirst.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         jButtonFirst.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jButtonFirst.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonFirstActionPerformed(evt);
+            }
+        });
         jToolBarRecordParser.add(jButtonFirst);
 
         jButtonPrevious.setText("<");
         jButtonPrevious.setFocusable(false);
         jButtonPrevious.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         jButtonPrevious.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jButtonPrevious.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonPreviousActionPerformed(evt);
+            }
+        });
         jToolBarRecordParser.add(jButtonPrevious);
 
         jLabelRecordStatus.setText("Page 0 of 0  ");
@@ -81,12 +126,22 @@ public class BQLabReportImporter extends javax.swing.JFrame {
         jButtonNext.setFocusable(false);
         jButtonNext.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         jButtonNext.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jButtonNext.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonNextActionPerformed(evt);
+            }
+        });
         jToolBarRecordParser.add(jButtonNext);
 
         jButtonLast.setText(">>");
         jButtonLast.setFocusable(false);
         jButtonLast.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         jButtonLast.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jButtonLast.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonLastActionPerformed(evt);
+            }
+        });
         jToolBarRecordParser.add(jButtonLast);
 
         jPanelPDF.add(jToolBarRecordParser, java.awt.BorderLayout.PAGE_START);
@@ -108,9 +163,12 @@ public class BQLabReportImporter extends javax.swing.JFrame {
         jPanelUserDetails.add(jButtonUpload);
 
         jLabelDateCollected.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        jLabelDateCollected.setText("Date Uploaded:");
+        jLabelDateCollected.setText("Date Collected:");
         jPanelUserDetails.add(jLabelDateCollected);
         jPanelUserDetails.add(jTextFieldDateCollected);
+
+        jButtonToCSV.setText("To CSV");
+        jPanelUserDetails.add(jButtonToCSV);
 
         jPanelData.add(jPanelUserDetails, java.awt.BorderLayout.PAGE_START);
 
@@ -125,13 +183,14 @@ public class BQLabReportImporter extends javax.swing.JFrame {
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.String.class, java.lang.Double.class, java.lang.Object.class
+                java.lang.String.class, java.lang.Double.class, java.lang.String.class
             };
 
             public Class getColumnClass(int columnIndex) {
                 return types [columnIndex];
             }
         });
+        jTablePDF.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_LAST_COLUMN);
         jScrollPanePDF.setViewportView(jTablePDF);
 
         jPanelData.add(jScrollPanePDF, java.awt.BorderLayout.CENTER);
@@ -146,12 +205,22 @@ public class BQLabReportImporter extends javax.swing.JFrame {
         jButtonCMEP.setFocusable(false);
         jButtonCMEP.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         jButtonCMEP.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jButtonCMEP.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonCMEPActionPerformed(evt);
+            }
+        });
         jToolBarLoaderButtons.add(jButtonCMEP);
 
         jButton1.setText("IgG4");
         jButton1.setFocusable(false);
         jButton1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         jButton1.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
         jToolBarLoaderButtons.add(jButton1);
 
         getContentPane().add(jToolBarLoaderButtons, java.awt.BorderLayout.PAGE_START);
@@ -159,8 +228,111 @@ public class BQLabReportImporter extends javax.swing.JFrame {
         jLabelStatus.setText("Status:");
         getContentPane().add(jLabelStatus, java.awt.BorderLayout.PAGE_END);
 
+        jMenuFile.setText("File");
+
+        jMenuItemExit.setText("Exit");
+        jMenuItemExit.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItemExitActionPerformed(evt);
+            }
+        });
+        jMenuFile.add(jMenuItemExit);
+
+        jMenuBarMainMenu.add(jMenuFile);
+
+        jMenuEdit.setText("Edit");
+        jMenuBarMainMenu.add(jMenuEdit);
+
+        jMenuLabReports.setText("Lab Reports");
+
+        jMenuItemCMEP.setText("CMEP");
+        jMenuItemCMEP.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItemCMEPActionPerformed(evt);
+            }
+        });
+        jMenuLabReports.add(jMenuItemCMEP);
+
+        jMenuItemIgG4.setText("IgG4");
+        jMenuItemIgG4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItemIgG4ActionPerformed(evt);
+            }
+        });
+        jMenuLabReports.add(jMenuItemIgG4);
+
+        jMenuBarMainMenu.add(jMenuLabReports);
+
+        setJMenuBar(jMenuBarMainMenu);
+
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jButtonCMEPActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCMEPActionPerformed
+        // TODO add your handling code here:
+        loadCMEPReport();
+    }//GEN-LAST:event_jButtonCMEPActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+        loadIgG4Report();
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jButtonFirstActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonFirstActionPerformed
+        // TODO add your handling code here:
+        if(document!=null){
+            currentPage=1;
+            renderPage();
+        }
+    }//GEN-LAST:event_jButtonFirstActionPerformed
+
+    private void jButtonPreviousActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonPreviousActionPerformed
+        // TODO add your handling code here:
+        if(document!=null){
+            if(currentPage>1){
+                currentPage--;
+                renderPage();
+            }
+        }
+    }//GEN-LAST:event_jButtonPreviousActionPerformed
+
+    private void jButtonNextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonNextActionPerformed
+        // TODO add your handling code here:
+        if(document!=null){
+            if(currentPage<document.getNumberOfPages()){
+                currentPage++;
+                renderPage();
+            }
+        }
+    }//GEN-LAST:event_jButtonNextActionPerformed
+
+    private void jButtonLastActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonLastActionPerformed
+        // TODO add your handling code here:
+        if(document!=null){
+            currentPage=document.getNumberOfPages();
+            renderPage();
+        }
+    }//GEN-LAST:event_jButtonLastActionPerformed
+
+    private void formComponentResized(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentResized
+        // TODO add your handling code here:
+        System.out.println("Component resized");
+    }//GEN-LAST:event_formComponentResized
+
+    private void jMenuItemExitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemExitActionPerformed
+        // TODO add your handling code here:
+        System.exit(0);
+    }//GEN-LAST:event_jMenuItemExitActionPerformed
+
+    private void jMenuItemCMEPActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemCMEPActionPerformed
+        // TODO add your handling code here:
+        loadCMEPReport();
+    }//GEN-LAST:event_jMenuItemCMEPActionPerformed
+
+    private void jMenuItemIgG4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemIgG4ActionPerformed
+        // TODO add your handling code here:
+        loadIgG4Report();
+    }//GEN-LAST:event_jMenuItemIgG4ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -197,6 +369,108 @@ public class BQLabReportImporter extends javax.swing.JFrame {
         });
     }
 
+    private void loadCMEPReport(){
+        try{
+            FileFilter pdfFilter = new FileNameExtensionFilter("PDF file", "pdf", "pdf");
+            JFileChooser pdfFileChooser=new JFileChooser();
+            pdfFileChooser.setCurrentDirectory(new File("D:\\BiornaQuantics\\Complete Metabolic Energy Profile"));
+            pdfFileChooser.setFileFilter(pdfFilter);
+            int result = pdfFileChooser.showOpenDialog(new JFrame());
+            if (result == JFileChooser.APPROVE_OPTION){
+                List<JSONObject> pdf_location_mappings = BQJSONParser.parseJSONFile("D:\\BiornaQuantics\\pdf_mapping_CMEP.json");
+                Map<String,String> lab_to_internal_mappings=BQJSONParser.parseLabToInternalMappingJSON("D:\\BiornaQuantics\\lab_to_internal_mapping_CMEP.json");
+                File selectedFile = pdfFileChooser.getSelectedFile();
+                String sFileWithPath=selectedFile.getAbsolutePath();
+                jLabelStatus.setText("Status: Parsing "+sFileWithPath);
+                Map<String,String> pdfExtract= PDFExtractor.ExtractCMEPPDFData(sFileWithPath,pdf_location_mappings);
+                displayPdf(pdfExtract,lab_to_internal_mappings);
+                currentPage=1;
+                document=PDDocument.load(selectedFile);
+                renderer = new PDFRenderer(document);
+                renderPage();
+            }
+        }catch(IOException e){
+            String message="Error occured while parsing pdf file.\n"+e.toString();
+            JOptionPane.showMessageDialog(new JFrame(), message, "Dialog",JOptionPane.ERROR_MESSAGE);
+        }catch(ParseException e){
+            String message="Error occured while parsing pdf file.\n"+e.toString();
+            JOptionPane.showMessageDialog(new JFrame(), message, "Dialog",JOptionPane.ERROR_MESSAGE);
+        }
+    }
+    
+    private void loadIgG4Report(){
+        try{
+            FileFilter pdfFilter = new FileNameExtensionFilter("PDF file", "pdf", "pdf");
+            JFileChooser pdfFileChooser=new JFileChooser();
+            pdfFileChooser.setCurrentDirectory(new File("D:\\BiornaQuantics\\Food Sensitivities IgG4"));
+            pdfFileChooser.setFileFilter(pdfFilter);
+            int result = pdfFileChooser.showOpenDialog(new JFrame());
+            if (result == JFileChooser.APPROVE_OPTION){
+                List<JSONObject> pdf_location_mappings = BQJSONParser.parseJSONFile("D:\\BiornaQuantics\\pdf_mapping_IgG4.json");
+                Map<String,String> lab_to_internal_mappings=BQJSONParser.parseLabToInternalMappingJSON("D:\\BiornaQuantics\\lab_to_internal_mapping_IgG4.json");
+                File selectedFile = pdfFileChooser.getSelectedFile();
+                String sFileWithPath=selectedFile.getAbsolutePath();
+                jLabelStatus.setText("Status: Parsing "+sFileWithPath);
+                Map<String,String> pdfExtract= PDFExtractor.ExtractIgG4PDFData(sFileWithPath,pdf_location_mappings);
+                displayPdf(pdfExtract,lab_to_internal_mappings);
+                currentPage=1;
+                document=PDDocument.load(selectedFile);
+                renderer = new PDFRenderer(document);
+                renderPage();
+            }
+        }catch(IOException e){
+            String message="Error occured while parsing pdf file.\n"+e.toString();
+            JOptionPane.showMessageDialog(new JFrame(), message, "Dialog",JOptionPane.ERROR_MESSAGE);
+        }catch(ParseException e){
+            String message="Error occured while parsing pdf file.\n"+e.toString();
+            JOptionPane.showMessageDialog(new JFrame(), message, "Dialog",JOptionPane.ERROR_MESSAGE);
+        }
+    }
+    
+    private void renderPage(){
+        try{
+            BufferedImage image=renderer.renderImageWithDPI(currentPage-1,RENDER_DPI);
+            image=resizeImage(image,jLabelPDF.getHeight(),jLabelPDF.getWidth());
+            ImageIcon iconLogo = new ImageIcon(image);
+            jLabelPDF.setIcon(iconLogo);
+            //jLabelPDF=new javax.swing.JLabel(iconLogo);
+            jLabelRecordStatus.setText("Page "+currentPage+" of "+document.getNumberOfPages());
+        }catch(IOException e){
+            String message="Error occured while parsing pdf file.\n"+e.toString();
+            JOptionPane.showMessageDialog(new JFrame(), message, "Dialog",JOptionPane.ERROR_MESSAGE);
+        }
+    }
+    private void displayPdf(Map<String,String> pdfExtract,Map<String,String> lab_to_internal_mappings){
+        DefaultTableModel tableModel = (DefaultTableModel)jTablePDF.getModel();
+        tableModel.setRowCount(0);
+        int i=0;
+        int columns = tableModel.getColumnCount();
+        for(String key:pdfExtract.keySet()){
+            //System.out.println(key+" "+pdfExtract.get(key));
+            String[] splitKeys=key.split("_");
+            if(splitKeys[1].equals("Measurement")){
+                Object[] row=new Object[columns];
+                row[0]=splitKeys[0];
+                row[1]=Double.parseDouble(pdfExtract.get(key).replace(" ",""));
+                if(lab_to_internal_mappings.containsKey(row[0]))
+                    row[2]=lab_to_internal_mappings.get(row[0]).toString();
+                else
+                    row[2]="";
+                tableModel.insertRow(i++, row);
+            }
+        }
+        jTextFieldName.setText(pdfExtract.get("Name_ReportDetails").trim());
+        jTextFieldDateCollected.setText(pdfExtract.get("DateOfCollection_ReportDetails"));
+    }
+    private static BufferedImage resizeImage(BufferedImage img, int height, int width) {
+        Image tmp = img.getScaledInstance(width, height, Image.SCALE_SMOOTH);
+        BufferedImage resized = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2d = resized.createGraphics();
+        g2d.drawImage(tmp, 0, 0, null);
+        g2d.dispose();
+        return resized;
+    }
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButtonCMEP;
@@ -204,12 +478,20 @@ public class BQLabReportImporter extends javax.swing.JFrame {
     private javax.swing.JButton jButtonLast;
     private javax.swing.JButton jButtonNext;
     private javax.swing.JButton jButtonPrevious;
+    private javax.swing.JButton jButtonToCSV;
     private javax.swing.JButton jButtonUpload;
     private javax.swing.JLabel jLabelDateCollected;
     private javax.swing.JLabel jLabelName;
     private javax.swing.JLabel jLabelPDF;
     private javax.swing.JLabel jLabelRecordStatus;
     private javax.swing.JLabel jLabelStatus;
+    private javax.swing.JMenuBar jMenuBarMainMenu;
+    private javax.swing.JMenu jMenuEdit;
+    private javax.swing.JMenu jMenuFile;
+    private javax.swing.JMenuItem jMenuItemCMEP;
+    private javax.swing.JMenuItem jMenuItemExit;
+    private javax.swing.JMenuItem jMenuItemIgG4;
+    private javax.swing.JMenu jMenuLabReports;
     private javax.swing.JPanel jPanelData;
     private javax.swing.JPanel jPanelMain;
     private javax.swing.JPanel jPanelPDF;
