@@ -231,6 +231,9 @@
                   <Properties>
                     <Property name="text" type="java.lang.String" value="To CSV"/>
                   </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButtonToCSVActionPerformed"/>
+                  </Events>
                 </Component>
               </SubComponents>
             </Container>
@@ -260,6 +263,9 @@
                     </Property>
                     <Property name="autoResizeMode" type="int" value="3"/>
                   </Properties>
+                  <AuxValues>
+                    <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="jTablePDF.getColumnModel().getColumn(0).setPreferredWidth(100);&#xd;&#xa;jTablePDF.getColumnModel().getColumn(1).setPreferredWidth(15);"/>
+                  </AuxValues>
                 </Component>
               </SubComponents>
             </Container>

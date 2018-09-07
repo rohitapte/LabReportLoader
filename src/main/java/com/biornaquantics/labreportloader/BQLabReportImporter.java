@@ -10,6 +10,7 @@ import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.List;
 import java.util.Map;
 import javax.swing.ImageIcon;
@@ -48,7 +49,6 @@ public class BQLabReportImporter extends javax.swing.JFrame {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
-        java.awt.GridBagConstraints gridBagConstraints;
 
         jPanelMain = new javax.swing.JPanel();
         jPanelPDF = new javax.swing.JPanel();
@@ -168,6 +168,11 @@ public class BQLabReportImporter extends javax.swing.JFrame {
         jPanelUserDetails.add(jTextFieldDateCollected);
 
         jButtonToCSV.setText("To CSV");
+        jButtonToCSV.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonToCSVActionPerformed(evt);
+            }
+        });
         jPanelUserDetails.add(jButtonToCSV);
 
         jPanelData.add(jPanelUserDetails, java.awt.BorderLayout.PAGE_START);
@@ -191,6 +196,8 @@ public class BQLabReportImporter extends javax.swing.JFrame {
             }
         });
         jTablePDF.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_LAST_COLUMN);
+        jTablePDF.getColumnModel().getColumn(0).setPreferredWidth(100);
+        jTablePDF.getColumnModel().getColumn(1).setPreferredWidth(15);
         jScrollPanePDF.setViewportView(jTablePDF);
 
         jPanelData.add(jScrollPanePDF, java.awt.BorderLayout.CENTER);
@@ -333,6 +340,34 @@ public class BQLabReportImporter extends javax.swing.JFrame {
         // TODO add your handling code here:
         loadIgG4Report();
     }//GEN-LAST:event_jMenuItemIgG4ActionPerformed
+
+    private void jButtonToCSVActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonToCSVActionPerformed
+        // TODO add your handling code here:
+        JFileChooser fileChooser=new JFileChooser();
+        int returnVal = fileChooser.showSaveDialog(new JFrame());
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
+            try {
+                File file = fileChooser.getSelectedFile();
+                jLabelStatus.setText("Saving file "+file.toString());
+                PrintWriter os = new PrintWriter(file);
+                os.println("Name\t"+jTextFieldName.getText());
+                os.println("DateCollected\t"+jTextFieldDateCollected.getText());
+                
+                for (int i = 0; i < jTablePDF.getRowCount(); i++) {
+                    for (int j = 0; j < jTablePDF.getColumnCount(); j++) {
+                        os.print(jTablePDF.getValueAt(i, j).toString() + "\t");
+                    }
+                    os.println("");
+                }
+                os.close();
+                jLabelStatus.setText("Saving file "+file.toString()+"...Done");
+
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+    }//GEN-LAST:event_jButtonToCSVActionPerformed
 
     /**
      * @param args the command line arguments
