@@ -590,9 +590,11 @@ public class BQLabReportImporter extends javax.swing.JFrame {
             }
         }catch(IOException e){
             String message="Error occured while parsing pdf file.\n"+e.toString();
+            System.out.println(message);
             JOptionPane.showMessageDialog(new JFrame(), message, "Dialog",JOptionPane.ERROR_MESSAGE);
         }catch(ParseException e){
             String message="Error occured while parsing pdf file.\n"+e.toString();
+            System.out.println(message);
             JOptionPane.showMessageDialog(new JFrame(), message, "Dialog",JOptionPane.ERROR_MESSAGE);
         }
     }
@@ -620,9 +622,11 @@ public class BQLabReportImporter extends javax.swing.JFrame {
             }
         }catch(IOException e){
             String message="Error occured while parsing pdf file.\n"+e.toString();
+            System.out.println(message);
             JOptionPane.showMessageDialog(new JFrame(), message, "Dialog",JOptionPane.ERROR_MESSAGE);
         }catch(ParseException e){
             String message="Error occured while parsing pdf file.\n"+e.toString();
+            System.out.println(message);
             JOptionPane.showMessageDialog(new JFrame(), message, "Dialog",JOptionPane.ERROR_MESSAGE);
         }
     }
@@ -639,6 +643,7 @@ public class BQLabReportImporter extends javax.swing.JFrame {
             jLabelRecordStatus.setText("Page "+currentPage+" of "+document.getNumberOfPages());
         }catch(IOException e){
             String message="Error occured while parsing pdf file.\n"+e.toString();
+            System.out.println(message);
             JOptionPane.showMessageDialog(new JFrame(), message, "Dialog",JOptionPane.ERROR_MESSAGE);
         }
     }
@@ -661,8 +666,14 @@ public class BQLabReportImporter extends javax.swing.JFrame {
                 tableModel.insertRow(i++, row);
             }
         }
-        jTextFieldName.setText(pdfExtract.get("Name_ReportDetails").trim());
-        jTextFieldDateCollected.setText(pdfExtract.get("DateOfCollection_ReportDetails"));
+        //if(pdfExtract.containsKey("Name_ReportDetails"))
+            jTextFieldName.setText(pdfExtract.get("Name_ReportDetails").trim());
+        //else
+        //    jTextFieldName.setText("");
+        //if(pdfExtract.containsKey("DateOfCollection_ReportDetails"))
+            jTextFieldDateCollected.setText(pdfExtract.get("DateOfCollection_ReportDetails"));
+        //else
+        //    jTextFieldDateCollected.setText("");
     }
     private static BufferedImage resizeImage(BufferedImage img, int height, int width) {
         Image tmp = img.getScaledInstance(width, height, Image.SCALE_SMOOTH);

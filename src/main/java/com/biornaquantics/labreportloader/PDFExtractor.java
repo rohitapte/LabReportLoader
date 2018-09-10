@@ -27,6 +27,8 @@ import java.util.Map;
 public class PDFExtractor {
     public static Map<String,String> ExtractCMEPPDFData(String pdfFile, List<JSONObject> jsonData) throws IOException{
         Map<String,String> returnValues=new LinkedHashMap<>();
+        returnValues.put("Name_ReportDetails","");
+        returnValues.put("DateOfCollection_ReportDetails","");
         try {
             PdfDocument pdfDoc=new PdfDocument(new PdfReader(pdfFile));
             for(JSONObject item:jsonData){
@@ -51,6 +53,8 @@ public class PDFExtractor {
     }
     public static Map<String,String> ExtractIgG4PDFData(String pdfFile, List<JSONObject> jsonData) throws IOException{
         Map<String,String> returnValues=new LinkedHashMap<>();
+        returnValues.put("Name_ReportDetails","");
+        returnValues.put("DateOfCollection_ReportDetails","");
         try {
             PdfDocument pdfDoc=new PdfDocument(new PdfReader(pdfFile));
             Rectangle rect = new Rectangle(100,(float)725.72,100,10);

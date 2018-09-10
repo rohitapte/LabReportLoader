@@ -15,11 +15,14 @@ import com.itextpdf.kernel.pdf.canvas.parser.listener.ITextExtractionStrategy;
 import com.itextpdf.kernel.pdf.canvas.parser.listener.LocationTextExtractionStrategy;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import javax.imageio.ImageIO;
 
 /**
@@ -35,7 +38,7 @@ import org.json.simple.parser.ParseException;
 
 public class Test {
     public static void main(String[] args){
-        try{
+        /*try{
             List<JSONObject> pdf_location_mappings = BQJSONParser.parseJSONFile("D:\\BiornaQuantics\\pdf_mapping_IgG4.json");
             Map<String,String> lab_to_internal_mappings=BQJSONParser.parseLabToInternalMappingJSON("D:\\BiornaQuantics\\lab_to_internal_mapping_IgG4.json");
             String sFileWithPath="D:\\BiornaQuantics\\Food Sensitivities IgG4\\FoodS_Abi Tyrrell_2016.06.02.pdf";
@@ -55,6 +58,25 @@ public class Test {
         }catch(IOException e){
             e.printStackTrace();
         }catch(ParseException e){
+            e.printStackTrace();
+        }*/
+        Properties prop=new Properties();
+        OutputStream output=null;
+        try{
+            output = new FileOutputStream("config.properties");
+
+            // set the properties value
+            prop.setProperty("CMEPLocation", "D:\\\\BiornaQuantics\\\\Complete Metabolic Energy Profile");
+            prop.setProperty("IgG4Location", "D:\\BiornaQuantics\\Food Sensitivities IgG4");
+            prop.setProperty("IgG4_PDF_location", "D:\\BiornaQuantics\\pdf_mapping_IgG4.json");
+            prop.setProperty("IgG4_pdf_to_internal", "D:\\BiornaQuantics\\lab_to_internal_mapping_IgG4.json");
+            prop.setProperty("CMEP_PDF_location", "D:\\BiornaQuantics\\pdf_mapping_CMEP.json");
+            prop.setProperty("CMEP_pdf_to_internal", "D:\\BiornaQuantics\\lab_to_internal_mapping_CMEP.json");
+
+            // save properties to project root folder
+            prop.store(output, null);
+
+        }catch(IOException e){
             e.printStackTrace();
         }
     }
