@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -50,6 +51,7 @@ public class BQJSONParser {
         List<String> returnValues=new ArrayList<>();
         Stream<String> stream= Files.lines(Paths.get(filename));
         returnValues=stream.collect(Collectors.toList());
+        Collections.sort(returnValues);
         return returnValues;
     }
 }
