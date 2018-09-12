@@ -10,6 +10,7 @@ import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -56,6 +57,8 @@ public class BQLabReportImporter extends javax.swing.JFrame {
     public BQLabReportImporter() {
         try{
             internalMarkers=BQJSONParser.parseKeys("D:\\BiornaQuantics\\keys.txt");
+            editBox.addItem("");
+            editBox.setEditable(true);
             for(String marker:internalMarkers)
                 editBox.addItem(marker);
         }catch(IOException e){
@@ -63,6 +66,10 @@ public class BQLabReportImporter extends javax.swing.JFrame {
         }
         initComponents();
         TableColumn col=jTablePDF.getColumnModel().getColumn(2);
+        col.setCellEditor(new DefaultCellEditor(editBox));
+        col=jTableMappingCMEP.getColumnModel().getColumn(1);
+        col.setCellEditor(new DefaultCellEditor(editBox));
+        col=jTableMappingIgG4.getColumnModel().getColumn(1);
         col.setCellEditor(new DefaultCellEditor(editBox));
         this.setTitle("Biorna Quantics Lab Report Importer");
         Properties prop=new Properties();
@@ -116,6 +123,18 @@ public class BQLabReportImporter extends javax.swing.JFrame {
         jPanelButtons = new javax.swing.JPanel();
         jButtonSave = new javax.swing.JButton();
         jButtonClose = new javax.swing.JButton();
+        jDialogMapping = new javax.swing.JDialog();
+        jPanelMappingMain = new javax.swing.JPanel();
+        jTabbedPaneMapping = new javax.swing.JTabbedPane();
+        jPanelMappingCMEP = new javax.swing.JPanel();
+        jScrollPaneMappingCMEP = new javax.swing.JScrollPane();
+        jTableMappingCMEP = new javax.swing.JTable();
+        jPanelMappingIgG4 = new javax.swing.JPanel();
+        jScrollPaneMappingIgG4 = new javax.swing.JScrollPane();
+        jTableMappingIgG4 = new javax.swing.JTable();
+        jPanelMappingButtons = new javax.swing.JPanel();
+        jButtonMappingSave = new javax.swing.JButton();
+        jButtonMappingClose = new javax.swing.JButton();
         jPanelMain = new javax.swing.JPanel();
         jPanelPDF = new javax.swing.JPanel();
         jToolBarRecordParser = new javax.swing.JToolBar();
@@ -144,6 +163,7 @@ public class BQLabReportImporter extends javax.swing.JFrame {
         jMenuItemExit = new javax.swing.JMenuItem();
         jMenuEdit = new javax.swing.JMenu();
         jMenuItemSettings = new javax.swing.JMenuItem();
+        jMenuItemMappings = new javax.swing.JMenuItem();
         jMenuLabReports = new javax.swing.JMenu();
         jMenuItemCMEP = new javax.swing.JMenuItem();
         jMenuItemIgG4 = new javax.swing.JMenuItem();
@@ -181,6 +201,8 @@ public class BQLabReportImporter extends javax.swing.JFrame {
         jDialogSettings.getContentPane().add(jTextFieldIgG4LabToInternalMarker);
         jDialogSettings.getContentPane().add(jPanelEmpty);
 
+        jPanelButtons.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT));
+
         jButtonSave.setText("Save");
         jButtonSave.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -198,6 +220,76 @@ public class BQLabReportImporter extends javax.swing.JFrame {
         jPanelButtons.add(jButtonClose);
 
         jDialogSettings.getContentPane().add(jPanelButtons);
+
+        jPanelMappingMain.setLayout(new java.awt.GridLayout(1, 1));
+
+        jTableMappingCMEP.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Lab Marker", "Internal Marker"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.String.class, java.lang.String.class
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+        });
+        jScrollPaneMappingCMEP.setViewportView(jTableMappingCMEP);
+
+        jPanelMappingCMEP.add(jScrollPaneMappingCMEP);
+
+        jTabbedPaneMapping.addTab("CMEP", jPanelMappingCMEP);
+
+        jTableMappingIgG4.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Lab Marker", "Internal Marker"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.String.class, java.lang.String.class
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+        });
+        jScrollPaneMappingIgG4.setViewportView(jTableMappingIgG4);
+
+        jPanelMappingIgG4.add(jScrollPaneMappingIgG4);
+
+        jTabbedPaneMapping.addTab("IgG4", jPanelMappingIgG4);
+
+        jPanelMappingMain.add(jTabbedPaneMapping);
+
+        jDialogMapping.getContentPane().add(jPanelMappingMain, java.awt.BorderLayout.CENTER);
+
+        jPanelMappingButtons.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT));
+
+        jButtonMappingSave.setText("Save");
+        jButtonMappingSave.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonMappingSaveActionPerformed(evt);
+            }
+        });
+        jPanelMappingButtons.add(jButtonMappingSave);
+
+        jButtonMappingClose.setText("Close");
+        jButtonMappingClose.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonMappingCloseActionPerformed(evt);
+            }
+        });
+        jPanelMappingButtons.add(jButtonMappingClose);
+
+        jDialogMapping.getContentPane().add(jPanelMappingButtons, java.awt.BorderLayout.SOUTH);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         addComponentListener(new java.awt.event.ComponentAdapter() {
@@ -283,6 +375,11 @@ public class BQLabReportImporter extends javax.swing.JFrame {
         jPanelUserDetails.add(jTextFieldName);
 
         jButtonUpload.setText("Upload");
+        jButtonUpload.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonUploadActionPerformed(evt);
+            }
+        });
         jPanelUserDetails.add(jButtonUpload);
 
         jLabelDateCollected.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
@@ -379,6 +476,14 @@ public class BQLabReportImporter extends javax.swing.JFrame {
             }
         });
         jMenuEdit.add(jMenuItemSettings);
+
+        jMenuItemMappings.setText("Mappings");
+        jMenuItemMappings.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItemMappingsActionPerformed(evt);
+            }
+        });
+        jMenuEdit.add(jMenuItemMappings);
 
         jMenuBarMainMenu.add(jMenuEdit);
 
@@ -498,11 +603,14 @@ public class BQLabReportImporter extends javax.swing.JFrame {
                 }
                 thisMoment+="T00:00:00.000Z";
                 for (int i = 0; i < jTablePDF.getRowCount(); i++) {
-                    String sTemp=jTablePDF.getValueAt(i, 2)+"\t"+jTablePDF.getValueAt(i, 1)+"\t"+thisMoment;
-                    //for (int j = 0; j < jTablePDF.getColumnCount(); j++) {
-                        //os.print(jTablePDF.getValueAt(i, j).toString() + "\t");
-                    //}
-                    os.println(sTemp);
+                    String sTemp=jTablePDF.getValueAt(i, 2).toString().trim();
+                    if(sTemp.length()>0){
+                        sTemp+="\t"+jTablePDF.getValueAt(i, 1)+"\t"+thisMoment;
+                        //for (int j = 0; j < jTablePDF.getColumnCount(); j++) {
+                            //os.print(jTablePDF.getValueAt(i, j).toString() + "\t");
+                        //}
+                        os.println(sTemp);
+                    }
                 }
                 os.close();
                 jLabelStatus.setText("Saving file "+file.toString()+"...Done");
@@ -546,10 +654,10 @@ public class BQLabReportImporter extends javax.swing.JFrame {
             // set the properties value
             prop.setProperty("CMEPLocation", sCMEPLocation);
             prop.setProperty("IgG4Location", sIgG4Location);
-            prop.setProperty("IgG4_PDF_location", sCMEPToPDFLocation);
-            prop.setProperty("IgG4_pdf_to_internal", sCMEPPDFToInternal);
-            prop.setProperty("CMEP_PDF_location", sIgG4ToPDFLocation);
-            prop.setProperty("CMEP_pdf_to_internal", sIgG4PDFToInternal);
+            prop.setProperty("CMEP_PDF_location", sCMEPToPDFLocation);
+            prop.setProperty("CMEP_pdf_to_internal", sCMEPPDFToInternal);
+            prop.setProperty("IgG4_PDF_location", sIgG4ToPDFLocation);
+            prop.setProperty("IgG4_pdf_to_internal", sIgG4PDFToInternal);
 
             // save properties to project root folder
             prop.store(output, null);
@@ -563,6 +671,92 @@ public class BQLabReportImporter extends javax.swing.JFrame {
         // TODO add your handling code here:
         jDialogSettings.setVisible(false);
     }//GEN-LAST:event_jButtonCloseActionPerformed
+
+    private void jMenuItemMappingsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemMappingsActionPerformed
+        // TODO add your handling code here:
+        try{
+            Map<String,String> lab_to_internal_mappings=BQJSONParser.parseLabToInternalMappingJSON(sCMEPPDFToInternal);
+            DefaultTableModel tableModel = (DefaultTableModel) jTableMappingCMEP.getModel();
+            tableModel.setRowCount(0);
+            int i=0;
+            int columns = tableModel.getColumnCount();
+            for(String key:lab_to_internal_mappings.keySet()){
+                String[] row=new String[columns];
+                row[0]=key;
+                row[1]=lab_to_internal_mappings.get(key).toString();
+                tableModel.insertRow(i++, row);
+            }
+            lab_to_internal_mappings=BQJSONParser.parseLabToInternalMappingJSON(sIgG4PDFToInternal);
+            tableModel = (DefaultTableModel) jTableMappingIgG4.getModel();
+            tableModel.setRowCount(0);
+            i=0;
+            columns = tableModel.getColumnCount();
+            for(String key:lab_to_internal_mappings.keySet()){
+                String[] row=new String[columns];
+                row[0]=key;
+                row[1]=lab_to_internal_mappings.get(key).toString();
+                tableModel.insertRow(i++, row);
+            }
+        }catch(IOException e){
+            e.printStackTrace();
+        }catch(ParseException e){
+            e.printStackTrace();
+        }
+        jDialogMapping.pack();
+        jDialogMapping.setVisible(true);
+    }//GEN-LAST:event_jMenuItemMappingsActionPerformed
+
+    private void jButtonMappingCloseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonMappingCloseActionPerformed
+        // TODO add your handling code here:
+        jDialogMapping.setVisible(false);
+    }//GEN-LAST:event_jButtonMappingCloseActionPerformed
+
+    private void jButtonMappingSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonMappingSaveActionPerformed
+        // TODO add your handling code here:
+        try{
+            PrintWriter os = new PrintWriter(sCMEPPDFToInternal);
+            for (int i = 0; i < jTableMappingCMEP.getRowCount(); i++) {
+                String sTemp="{\"LabName\":\""+jTableMappingCMEP.getValueAt(i,0).toString()+"\",\"InternalName\":\""+jTableMappingCMEP.getValueAt(i,1).toString()+"\"}";
+                os.println(sTemp);
+            }
+            os.close();
+            os = new PrintWriter(sIgG4PDFToInternal);
+            for (int i = 0; i < jTableMappingIgG4.getRowCount(); i++) {
+                String sTemp="{\"LabName\":\""+jTableMappingIgG4.getValueAt(i,0).toString()+"\",\"InternalName\":\""+jTableMappingIgG4.getValueAt(i,1).toString()+"\"}";
+                os.println(sTemp);
+            }
+            os.close();
+        }catch(FileNotFoundException e){
+            e.printStackTrace();
+        }
+    }//GEN-LAST:event_jButtonMappingSaveActionPerformed
+
+    private void jButtonUploadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonUploadActionPerformed
+        // TODO add your handling code here:
+        JFileChooser fileChooser=new JFileChooser();
+        int returnVal = fileChooser.showSaveDialog(new JFrame());
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
+            try {
+                File file = fileChooser.getSelectedFile();
+                jLabelStatus.setText("Saving file "+file.toString());
+                PrintWriter os = new PrintWriter(file);
+                os.println("Name\t"+jTextFieldName.getText());
+                os.println("DateCollected\t"+jTextFieldDateCollected.getText());
+                for (int i = 0; i < jTablePDF.getRowCount(); i++) {
+                    for (int j = 0; j < jTablePDF.getColumnCount(); j++) {
+                        os.print(jTablePDF.getValueAt(i, j).toString() + "\t");
+                    }
+                    os.println("");
+                }
+                os.close();
+                jLabelStatus.setText("Saving file "+file.toString()+"...Done");
+
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+    }//GEN-LAST:event_jButtonUploadActionPerformed
 
     /**
      * @param args the command line arguments
@@ -722,11 +916,14 @@ public class BQLabReportImporter extends javax.swing.JFrame {
     private javax.swing.JButton jButtonClose;
     private javax.swing.JButton jButtonFirst;
     private javax.swing.JButton jButtonLast;
+    private javax.swing.JButton jButtonMappingClose;
+    private javax.swing.JButton jButtonMappingSave;
     private javax.swing.JButton jButtonNext;
     private javax.swing.JButton jButtonPrevious;
     private javax.swing.JButton jButtonSave;
     private javax.swing.JButton jButtonToCSV;
     private javax.swing.JButton jButtonUpload;
+    private javax.swing.JDialog jDialogMapping;
     private javax.swing.JDialog jDialogSettings;
     private javax.swing.JLabel jLabelCMEPDirectory;
     private javax.swing.JLabel jLabelCMEPLabToInternalMarker;
@@ -745,15 +942,25 @@ public class BQLabReportImporter extends javax.swing.JFrame {
     private javax.swing.JMenuItem jMenuItemCMEP;
     private javax.swing.JMenuItem jMenuItemExit;
     private javax.swing.JMenuItem jMenuItemIgG4;
+    private javax.swing.JMenuItem jMenuItemMappings;
     private javax.swing.JMenuItem jMenuItemSettings;
     private javax.swing.JMenu jMenuLabReports;
     private javax.swing.JPanel jPanelButtons;
     private javax.swing.JPanel jPanelData;
     private javax.swing.JPanel jPanelEmpty;
     private javax.swing.JPanel jPanelMain;
+    private javax.swing.JPanel jPanelMappingButtons;
+    private javax.swing.JPanel jPanelMappingCMEP;
+    private javax.swing.JPanel jPanelMappingIgG4;
+    private javax.swing.JPanel jPanelMappingMain;
     private javax.swing.JPanel jPanelPDF;
     private javax.swing.JPanel jPanelUserDetails;
+    private javax.swing.JScrollPane jScrollPaneMappingCMEP;
+    private javax.swing.JScrollPane jScrollPaneMappingIgG4;
     private javax.swing.JScrollPane jScrollPanePDF;
+    private javax.swing.JTabbedPane jTabbedPaneMapping;
+    private javax.swing.JTable jTableMappingCMEP;
+    private javax.swing.JTable jTableMappingIgG4;
     private javax.swing.JTable jTablePDF;
     private javax.swing.JTextField jTextFieldCMEPDirectory;
     private javax.swing.JTextField jTextFieldCMEPLabToInternalMarker;
