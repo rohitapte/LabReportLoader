@@ -7,6 +7,7 @@ package com.biornaquantics.labreportloader;
 
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
@@ -33,6 +34,7 @@ import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
+import javax.swing.table.TableColumnModel;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.rendering.PDFRenderer;
 import org.json.simple.JSONObject;
@@ -49,7 +51,7 @@ public class BQLabReportImporter extends javax.swing.JFrame {
     private float RENDER_DPI=200;
     String sCMEPLocation="",sIgG4Location="",sIgG4ToPDFLocation="",sIgG4PDFToInternal="",sCMEPToPDFLocation="",sCMEPPDFToInternal="";
     List<String> internalMarkers=new ArrayList<>();
-    JComboBox<String> editBox=new JComboBox<String>();
+    Java2sAutoComboBox editBox;
 
     /**
      * Creates new form BQLabReportImporter
@@ -57,15 +59,20 @@ public class BQLabReportImporter extends javax.swing.JFrame {
     public BQLabReportImporter() {
         try{
             internalMarkers=BQJSONParser.parseKeys("D:\\BiornaQuantics\\keys.txt");
-            editBox.addItem("");
-            editBox.setEditable(true);
-            for(String marker:internalMarkers)
-                editBox.addItem(marker);
+            internalMarkers.add(0,"");
+            editBox=new Java2sAutoComboBox(internalMarkers);
+            //editBox.addItem("");
+            //editBox.setEditable(true);
+            //for(String marker:internalMarkers)
+            //    editBox.addItem(marker);
         }catch(IOException e){
             e.printStackTrace();
         }
         initComponents();
-        TableColumn col=jTablePDF.getColumnModel().getColumn(2);
+        TableColumnModel colModel=jTablePDF.getColumnModel();
+        colModel.getColumn(0).setPreferredWidth(10);  
+        colModel.getColumn(1).setPreferredWidth(5);
+        TableColumn col=colModel.getColumn(2);    
         col.setCellEditor(new DefaultCellEditor(editBox));
         col=jTableMappingCMEP.getColumnModel().getColumn(1);
         col.setCellEditor(new DefaultCellEditor(editBox));
@@ -135,6 +142,15 @@ public class BQLabReportImporter extends javax.swing.JFrame {
         jPanelMappingButtons = new javax.swing.JPanel();
         jButtonMappingSave = new javax.swing.JButton();
         jButtonMappingClose = new javax.swing.JButton();
+        jPopupMenuPDF = new javax.swing.JPopupMenu();
+        jMenuItemInsertPDF = new javax.swing.JMenuItem();
+        jMenuItemDeletePDF = new javax.swing.JMenuItem();
+        jPopupMenuCMEP = new javax.swing.JPopupMenu();
+        jMenuItemInsertCMEP = new javax.swing.JMenuItem();
+        jMenuItemDeleteCMEP = new javax.swing.JMenuItem();
+        jPopupMenuIgG4 = new javax.swing.JPopupMenu();
+        jMenuItemInsertIgG4 = new javax.swing.JMenuItem();
+        jMenuItemDeleteIgG4 = new javax.swing.JMenuItem();
         jPanelMain = new javax.swing.JPanel();
         jPanelPDF = new javax.swing.JPanel();
         jToolBarRecordParser = new javax.swing.JToolBar();
@@ -223,6 +239,8 @@ public class BQLabReportImporter extends javax.swing.JFrame {
 
         jPanelMappingMain.setLayout(new java.awt.GridLayout(1, 1));
 
+        jPanelMappingCMEP.setLayout(new java.awt.BorderLayout());
+
         jTableMappingCMEP.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
@@ -239,9 +257,16 @@ public class BQLabReportImporter extends javax.swing.JFrame {
                 return types [columnIndex];
             }
         });
+        jTableMappingCMEP.setComponentPopupMenu(jPopupMenuCMEP);
+        jTableMappingCMEP.setRowHeight(22);
+        jTableMappingCMEP.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTableMappingCMEPMouseClicked(evt);
+            }
+        });
         jScrollPaneMappingCMEP.setViewportView(jTableMappingCMEP);
 
-        jPanelMappingCMEP.add(jScrollPaneMappingCMEP);
+        jPanelMappingCMEP.add(jScrollPaneMappingCMEP, java.awt.BorderLayout.CENTER);
 
         jTabbedPaneMapping.addTab("CMEP", jPanelMappingCMEP);
 
@@ -259,6 +284,13 @@ public class BQLabReportImporter extends javax.swing.JFrame {
 
             public Class getColumnClass(int columnIndex) {
                 return types [columnIndex];
+            }
+        });
+        jTableMappingIgG4.setComponentPopupMenu(jPopupMenuIgG4);
+        jTableMappingIgG4.setRowHeight(22);
+        jTableMappingIgG4.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTableMappingIgG4MouseClicked(evt);
             }
         });
         jScrollPaneMappingIgG4.setViewportView(jTableMappingIgG4);
@@ -290,6 +322,54 @@ public class BQLabReportImporter extends javax.swing.JFrame {
         jPanelMappingButtons.add(jButtonMappingClose);
 
         jDialogMapping.getContentPane().add(jPanelMappingButtons, java.awt.BorderLayout.SOUTH);
+
+        jMenuItemInsertPDF.setText("Insert Row");
+        jMenuItemInsertPDF.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItemInsertPDFActionPerformed(evt);
+            }
+        });
+        jPopupMenuPDF.add(jMenuItemInsertPDF);
+
+        jMenuItemDeletePDF.setText("Delete Row");
+        jMenuItemDeletePDF.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItemDeletePDFActionPerformed(evt);
+            }
+        });
+        jPopupMenuPDF.add(jMenuItemDeletePDF);
+
+        jMenuItemInsertCMEP.setText("Insert Row");
+        jMenuItemInsertCMEP.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItemInsertCMEPActionPerformed(evt);
+            }
+        });
+        jPopupMenuCMEP.add(jMenuItemInsertCMEP);
+
+        jMenuItemDeleteCMEP.setText("Delete Row");
+        jMenuItemDeleteCMEP.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItemDeleteCMEPActionPerformed(evt);
+            }
+        });
+        jPopupMenuCMEP.add(jMenuItemDeleteCMEP);
+
+        jMenuItemInsertIgG4.setText("Insert Row");
+        jMenuItemInsertIgG4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItemInsertIgG4ActionPerformed(evt);
+            }
+        });
+        jPopupMenuIgG4.add(jMenuItemInsertIgG4);
+
+        jMenuItemDeleteIgG4.setText("Delete Row");
+        jMenuItemDeleteIgG4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItemDeleteIgG4ActionPerformed(evt);
+            }
+        });
+        jPopupMenuIgG4.add(jMenuItemDeleteIgG4);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         addComponentListener(new java.awt.event.ComponentAdapter() {
@@ -415,9 +495,16 @@ public class BQLabReportImporter extends javax.swing.JFrame {
                 return types [columnIndex];
             }
         });
-        jTablePDF.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_LAST_COLUMN);
+        jTablePDF.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_NEXT_COLUMN);
+        jTablePDF.setComponentPopupMenu(jPopupMenuPDF);
+        jTablePDF.setRowHeight(22);
         jTablePDF.getColumnModel().getColumn(0).setPreferredWidth(100);
         jTablePDF.getColumnModel().getColumn(1).setPreferredWidth(15);
+        jTablePDF.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                jTablePDFMousePressed(evt);
+            }
+        });
         jScrollPanePDF.setViewportView(jTablePDF);
 
         jPanelData.add(jScrollPanePDF, java.awt.BorderLayout.CENTER);
@@ -716,14 +803,22 @@ public class BQLabReportImporter extends javax.swing.JFrame {
         try{
             PrintWriter os = new PrintWriter(sCMEPPDFToInternal);
             for (int i = 0; i < jTableMappingCMEP.getRowCount(); i++) {
-                String sTemp="{\"LabName\":\""+jTableMappingCMEP.getValueAt(i,0).toString()+"\",\"InternalName\":\""+jTableMappingCMEP.getValueAt(i,1).toString()+"\"}";
-                os.println(sTemp);
+                String sLabMarker=jTableMappingCMEP.getValueAt(i,0).toString().trim();
+                String sInternalMarker=jTableMappingCMEP.getValueAt(i,1).toString().trim();
+                if(sLabMarker.length()>0 && sInternalMarker.length()>0){
+                    String sTemp="{\"LabName\":\""+sLabMarker+"\",\"InternalName\":\""+sInternalMarker+"\"}";
+                    os.println(sTemp);
+                }
             }
             os.close();
             os = new PrintWriter(sIgG4PDFToInternal);
             for (int i = 0; i < jTableMappingIgG4.getRowCount(); i++) {
-                String sTemp="{\"LabName\":\""+jTableMappingIgG4.getValueAt(i,0).toString()+"\",\"InternalName\":\""+jTableMappingIgG4.getValueAt(i,1).toString()+"\"}";
-                os.println(sTemp);
+                String sLabMarker=jTableMappingCMEP.getValueAt(i,0).toString().trim();
+                String sInternalMarker=jTableMappingCMEP.getValueAt(i,1).toString().trim();
+                if(sLabMarker.length()>0 && sInternalMarker.length()>0){
+                    String sTemp="{\"LabName\":\""+sLabMarker+"\",\"InternalName\":\""+sInternalMarker+"\"}";
+                    os.println(sTemp);
+                }
             }
             os.close();
         }catch(FileNotFoundException e){
@@ -757,6 +852,85 @@ public class BQLabReportImporter extends javax.swing.JFrame {
             }
         }
     }//GEN-LAST:event_jButtonUploadActionPerformed
+
+    private void jTablePDFMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTablePDFMousePressed
+        // TODO add your handling code here:
+        Point point = evt.getPoint();
+        int currentRow = jTablePDF.rowAtPoint(point);
+        jTablePDF.setRowSelectionInterval(currentRow, currentRow);
+    }//GEN-LAST:event_jTablePDFMousePressed
+
+    private void jMenuItemInsertPDFActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemInsertPDFActionPerformed
+        // TODO add your handling code here:
+        DefaultTableModel tableModel = (DefaultTableModel)jTablePDF.getModel();
+        int columns = tableModel.getColumnCount();
+        
+        Object[] row=new Object[columns];
+        row[0]="";
+        row[1]=0.0;
+        row[2]="";
+        int currentRow=jTablePDF.getSelectedRow();
+        tableModel.insertRow(currentRow,row);
+        jTablePDF.setRowSelectionInterval(currentRow, currentRow);
+    }//GEN-LAST:event_jMenuItemInsertPDFActionPerformed
+
+    private void jMenuItemDeletePDFActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemDeletePDFActionPerformed
+        // TODO add your handling code here:
+        DefaultTableModel tableModel = (DefaultTableModel)jTablePDF.getModel();
+        tableModel.removeRow(jTablePDF.getSelectedRow());
+    }//GEN-LAST:event_jMenuItemDeletePDFActionPerformed
+
+    private void jMenuItemInsertCMEPActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemInsertCMEPActionPerformed
+        // TODO add your handling code here:
+        DefaultTableModel tableModel = (DefaultTableModel)jTableMappingCMEP.getModel();
+        int columns = tableModel.getColumnCount();
+        
+        String[] row=new String[columns];
+        row[0]="";
+        row[1]="";
+        int currentRow=jTableMappingCMEP.getSelectedRow();
+        tableModel.insertRow(currentRow,row);
+        jTableMappingCMEP.setRowSelectionInterval(currentRow, currentRow);
+    }//GEN-LAST:event_jMenuItemInsertCMEPActionPerformed
+
+    private void jMenuItemDeleteCMEPActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemDeleteCMEPActionPerformed
+        // TODO add your handling code here:
+        DefaultTableModel tableModel = (DefaultTableModel)jTableMappingCMEP.getModel();
+        tableModel.removeRow(jTableMappingCMEP.getSelectedRow());
+    }//GEN-LAST:event_jMenuItemDeleteCMEPActionPerformed
+
+    private void jTableMappingCMEPMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTableMappingCMEPMouseClicked
+        // TODO add your handling code here:
+        Point point = evt.getPoint();
+        int currentRow = jTableMappingCMEP.rowAtPoint(point);
+        jTableMappingCMEP.setRowSelectionInterval(currentRow, currentRow);
+    }//GEN-LAST:event_jTableMappingCMEPMouseClicked
+
+    private void jMenuItemInsertIgG4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemInsertIgG4ActionPerformed
+        // TODO add your handling code here:
+        DefaultTableModel tableModel = (DefaultTableModel)jTableMappingIgG4.getModel();
+        int columns = tableModel.getColumnCount();
+        
+        String[] row=new String[columns];
+        row[0]="";
+        row[1]="";
+        int currentRow=jTableMappingIgG4.getSelectedRow();
+        tableModel.insertRow(currentRow,row);
+        jTableMappingIgG4.setRowSelectionInterval(currentRow, currentRow);
+    }//GEN-LAST:event_jMenuItemInsertIgG4ActionPerformed
+
+    private void jMenuItemDeleteIgG4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemDeleteIgG4ActionPerformed
+        // TODO add your handling code here:
+        DefaultTableModel tableModel = (DefaultTableModel)jTableMappingIgG4.getModel();
+        tableModel.removeRow(jTableMappingIgG4.getSelectedRow());
+    }//GEN-LAST:event_jMenuItemDeleteIgG4ActionPerformed
+
+    private void jTableMappingIgG4MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTableMappingIgG4MouseClicked
+        // TODO add your handling code here:
+        Point point = evt.getPoint();
+        int currentRow = jTableMappingIgG4.rowAtPoint(point);
+        jTableMappingIgG4.setRowSelectionInterval(currentRow, currentRow);
+    }//GEN-LAST:event_jTableMappingIgG4MouseClicked
 
     /**
      * @param args the command line arguments
@@ -940,8 +1114,14 @@ public class BQLabReportImporter extends javax.swing.JFrame {
     private javax.swing.JMenu jMenuEdit;
     private javax.swing.JMenu jMenuFile;
     private javax.swing.JMenuItem jMenuItemCMEP;
+    private javax.swing.JMenuItem jMenuItemDeleteCMEP;
+    private javax.swing.JMenuItem jMenuItemDeleteIgG4;
+    private javax.swing.JMenuItem jMenuItemDeletePDF;
     private javax.swing.JMenuItem jMenuItemExit;
     private javax.swing.JMenuItem jMenuItemIgG4;
+    private javax.swing.JMenuItem jMenuItemInsertCMEP;
+    private javax.swing.JMenuItem jMenuItemInsertIgG4;
+    private javax.swing.JMenuItem jMenuItemInsertPDF;
     private javax.swing.JMenuItem jMenuItemMappings;
     private javax.swing.JMenuItem jMenuItemSettings;
     private javax.swing.JMenu jMenuLabReports;
@@ -955,6 +1135,9 @@ public class BQLabReportImporter extends javax.swing.JFrame {
     private javax.swing.JPanel jPanelMappingMain;
     private javax.swing.JPanel jPanelPDF;
     private javax.swing.JPanel jPanelUserDetails;
+    private javax.swing.JPopupMenu jPopupMenuCMEP;
+    private javax.swing.JPopupMenu jPopupMenuIgG4;
+    private javax.swing.JPopupMenu jPopupMenuPDF;
     private javax.swing.JScrollPane jScrollPaneMappingCMEP;
     private javax.swing.JScrollPane jScrollPaneMappingIgG4;
     private javax.swing.JScrollPane jScrollPanePDF;
