@@ -46,4 +46,10 @@ public class BQJSONParser {
         }
         return returnMap;
     }
+    public static List<String> parseKeys(String filename) throws IOException{
+        List<String> returnValues=new ArrayList<>();
+        Stream<String> stream= Files.lines(Paths.get(filename));
+        returnValues=stream.collect(Collectors.toList());
+        return returnValues;
+    }
 }

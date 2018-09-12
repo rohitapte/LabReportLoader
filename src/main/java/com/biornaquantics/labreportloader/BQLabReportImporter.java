@@ -15,16 +15,23 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.time.Instant;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import javax.swing.DefaultCellEditor;
 import javax.swing.ImageIcon;
+import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumn;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.rendering.PDFRenderer;
 import org.json.simple.JSONObject;
@@ -40,12 +47,24 @@ public class BQLabReportImporter extends javax.swing.JFrame {
     PDFRenderer renderer=null;
     private float RENDER_DPI=200;
     String sCMEPLocation="",sIgG4Location="",sIgG4ToPDFLocation="",sIgG4PDFToInternal="",sCMEPToPDFLocation="",sCMEPPDFToInternal="";
+    List<String> internalMarkers=new ArrayList<>();
+    JComboBox<String> editBox=new JComboBox<String>();
 
     /**
      * Creates new form BQLabReportImporter
      */
     public BQLabReportImporter() {
+        try{
+            internalMarkers=BQJSONParser.parseKeys("D:\\BiornaQuantics\\keys.txt");
+            for(String marker:internalMarkers)
+                editBox.addItem(marker);
+        }catch(IOException e){
+            e.printStackTrace();
+        }
         initComponents();
+        TableColumn col=jTablePDF.getColumnModel().getColumn(2);
+        col.setCellEditor(new DefaultCellEditor(editBox));
+        this.setTitle("Biorna Quantics Lab Report Importer");
         Properties prop=new Properties();
         InputStream input = null;
         
@@ -463,14 +482,27 @@ public class BQLabReportImporter extends javax.swing.JFrame {
                 File file = fileChooser.getSelectedFile();
                 jLabelStatus.setText("Saving file "+file.toString());
                 PrintWriter os = new PrintWriter(file);
-                os.println("Name\t"+jTextFieldName.getText());
-                os.println("DateCollected\t"+jTextFieldDateCollected.getText());
-                
+                //os.println("Name\t"+jTextFieldName.getText());
+                //os.println("DateCollected\t"+jTextFieldDateCollected.getText());
+                os.println("key\tvalue\tmeasuredAt");
+                String thisMoment = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+                              .withZone(ZoneOffset.UTC)
+                              .format(Instant.now());
+                String[] dateSplit=jTextFieldDateCollected.getText().split("/");
+                if(dateSplit.length==3){
+                    if(dateSplit[0].length()==1)
+                        dateSplit[0]="0"+dateSplit[0];
+                    if(dateSplit[1].length()==1)
+                        dateSplit[1]="0"+dateSplit[1];
+                    thisMoment=dateSplit[2]+"-"+dateSplit[0]+"-"+dateSplit[1];
+                }
+                thisMoment+="T00:00:00.000Z";
                 for (int i = 0; i < jTablePDF.getRowCount(); i++) {
-                    for (int j = 0; j < jTablePDF.getColumnCount(); j++) {
-                        os.print(jTablePDF.getValueAt(i, j).toString() + "\t");
-                    }
-                    os.println("");
+                    String sTemp=jTablePDF.getValueAt(i, 2)+"\t"+jTablePDF.getValueAt(i, 1)+"\t"+thisMoment;
+                    //for (int j = 0; j < jTablePDF.getColumnCount(); j++) {
+                        //os.print(jTablePDF.getValueAt(i, j).toString() + "\t");
+                    //}
+                    os.println(sTemp);
                 }
                 os.close();
                 jLabelStatus.setText("Saving file "+file.toString()+"...Done");
