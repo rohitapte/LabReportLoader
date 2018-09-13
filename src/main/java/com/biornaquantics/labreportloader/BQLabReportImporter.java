@@ -241,6 +241,7 @@ public class BQLabReportImporter extends javax.swing.JFrame {
 
         jPanelMappingCMEP.setLayout(new java.awt.BorderLayout());
 
+        jTableMappingCMEP.setAutoCreateRowSorter(true);
         jTableMappingCMEP.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
@@ -270,6 +271,7 @@ public class BQLabReportImporter extends javax.swing.JFrame {
 
         jTabbedPaneMapping.addTab("CMEP", jPanelMappingCMEP);
 
+        jTableMappingIgG4.setAutoCreateRowSorter(true);
         jTableMappingIgG4.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
@@ -479,6 +481,7 @@ public class BQLabReportImporter extends javax.swing.JFrame {
 
         jScrollPanePDF.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 
+        jTablePDF.setAutoCreateRowSorter(true);
         jTablePDF.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
@@ -813,8 +816,8 @@ public class BQLabReportImporter extends javax.swing.JFrame {
             os.close();
             os = new PrintWriter(sIgG4PDFToInternal);
             for (int i = 0; i < jTableMappingIgG4.getRowCount(); i++) {
-                String sLabMarker=jTableMappingCMEP.getValueAt(i,0).toString().trim();
-                String sInternalMarker=jTableMappingCMEP.getValueAt(i,1).toString().trim();
+                String sLabMarker=jTableMappingIgG4.getValueAt(i,0).toString().trim();
+                String sInternalMarker=jTableMappingIgG4.getValueAt(i,1).toString().trim();
                 if(sLabMarker.length()>0 && sInternalMarker.length()>0){
                     String sTemp="{\"LabName\":\""+sLabMarker+"\",\"InternalName\":\""+sInternalMarker+"\"}";
                     os.println(sTemp);
