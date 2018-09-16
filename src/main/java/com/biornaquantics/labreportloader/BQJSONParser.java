@@ -5,9 +5,7 @@
  */
 package com.biornaquantics.labreportloader;
 
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -25,24 +23,24 @@ import java.util.stream.Stream;
  * @author Rohit Apte
  */
 public class BQJSONParser {
-    public static List<JSONObject> parseJSONFile(String filename) throws IOException,ParseException{
+    public static List<JSONObject> parseJSONFile(String filename) throws IOException{
         List<String> list=new ArrayList<>();
         List<JSONObject> returnArray=new ArrayList<>();
         Stream<String> stream= Files.lines(Paths.get(filename));
         list=stream.collect(Collectors.toList());
         for (String item : list) {
-            JSONObject jo=(JSONObject) new JSONParser().parse(item);
+            JSONObject jo=new JSONObject(item);
             returnArray.add(jo);
         }
         return returnArray;
     }
-    public static Map<String,String> parseLabToInternalMappingJSON(String filename) throws IOException,ParseException{
+    public static Map<String,String> parseLabToInternalMappingJSON(String filename) throws IOException{
         List<String> list=new ArrayList<>();
         Map<String,String> returnMap=new HashMap<>();
         Stream<String> stream= Files.lines(Paths.get(filename));
         list=stream.collect(Collectors.toList());
         for (String item : list) {
-            JSONObject jo=(JSONObject) new JSONParser().parse(item);
+            JSONObject jo=new JSONObject(item);
             returnMap.put(jo.get("LabName").toString(), jo.get("InternalName").toString());
         }
         return returnMap;

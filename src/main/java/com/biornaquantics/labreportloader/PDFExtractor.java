@@ -17,7 +17,7 @@ import com.itextpdf.kernel.pdf.canvas.parser.filter.TextRegionEventFilter;
 import com.itextpdf.kernel.pdf.canvas.parser.listener.FilteredTextEventListener;
 import com.itextpdf.kernel.pdf.canvas.parser.listener.ITextExtractionStrategy;
 import com.itextpdf.kernel.pdf.canvas.parser.listener.LocationTextExtractionStrategy;
-import org.json.simple.JSONObject;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.LinkedHashMap;
