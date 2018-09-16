@@ -23,10 +23,11 @@ import org.json.JSONObject;
  * @author tihor
  */
 public final class RESTAPIFunctions {
-    public static final JSONObject http_post(String sUrl,Map<String,String> header,Map<String,String> parameters) throws UnsupportedEncodingException,IOException{
+    public static final JSONObject http_post(String sUrl,Map<String,String> header,Map<String,Object> parameters) throws UnsupportedEncodingException,IOException{
         JSONObject jsonObject=new JSONObject(parameters);
         JSONObject returnObject=new JSONObject();
         String jsonFormattedMap=jsonObject.toString();
+        System.out.println(jsonFormattedMap);
         CloseableHttpClient client=HttpClients.createDefault();
         HttpPost httpPost=new HttpPost(sUrl);
         StringEntity entity = new StringEntity(jsonFormattedMap);

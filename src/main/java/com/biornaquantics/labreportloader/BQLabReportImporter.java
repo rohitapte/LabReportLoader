@@ -198,6 +198,7 @@ public class BQLabReportImporter extends javax.swing.JFrame {
         jMenuItemCMEP = new javax.swing.JMenuItem();
         jMenuItemIgG4 = new javax.swing.JMenuItem();
 
+        jDialogSettings.setModal(true);
         jDialogSettings.getContentPane().setLayout(new java.awt.GridLayout(7, 2));
 
         jLabelCMEPDirectory.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
@@ -250,6 +251,8 @@ public class BQLabReportImporter extends javax.swing.JFrame {
         jPanelButtons.add(jButtonClose);
 
         jDialogSettings.getContentPane().add(jPanelButtons);
+
+        jDialogMapping.setModal(true);
 
         jPanelMappingMain.setLayout(new java.awt.GridLayout(1, 1));
 
@@ -387,6 +390,8 @@ public class BQLabReportImporter extends javax.swing.JFrame {
         });
         jPopupMenuIgG4.add(jMenuItemDeleteIgG4);
 
+        jDialogUpload.setModal(true);
+
         jPanelUploadPane.setLayout(new java.awt.BorderLayout());
 
         jPanelUploadInputs.setLayout(new java.awt.GridLayout(3, 2));
@@ -417,6 +422,11 @@ public class BQLabReportImporter extends javax.swing.JFrame {
         jPanelUploadButtons.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT));
 
         jButtonUploadSave.setText("Save");
+        jButtonUploadSave.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonUploadSaveActionPerformed(evt);
+            }
+        });
         jPanelUploadButtons.add(jButtonUploadSave);
 
         jButtonUploadClose.setText("Close");
@@ -742,44 +752,46 @@ public class BQLabReportImporter extends javax.swing.JFrame {
 
     private void jButtonToCSVActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonToCSVActionPerformed
         // TODO add your handling code here:
-        JFileChooser fileChooser=new JFileChooser();
-        int returnVal = fileChooser.showSaveDialog(new JFrame());
-        if (returnVal == JFileChooser.APPROVE_OPTION) {
-            try {
-                File file = fileChooser.getSelectedFile();
-                jLabelStatus.setText("Saving file "+file.toString());
-                PrintWriter os = new PrintWriter(file);
-                //os.println("Name\t"+jTextFieldName.getText());
-                //os.println("DateCollected\t"+jTextFieldDateCollected.getText());
-                os.println("key\tvalue\tmeasuredAt");
-                String thisMoment = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-                              .withZone(ZoneOffset.UTC)
-                              .format(Instant.now());
-                String[] dateSplit=jTextFieldDateCollected.getText().split("/");
-                if(dateSplit.length==3){
-                    if(dateSplit[0].length()==1)
-                        dateSplit[0]="0"+dateSplit[0];
-                    if(dateSplit[1].length()==1)
-                        dateSplit[1]="0"+dateSplit[1];
-                    thisMoment=dateSplit[2]+"-"+dateSplit[0]+"-"+dateSplit[1];
-                }
-                thisMoment+="T00:00:00.000Z";
-                for (int i = 0; i < jTablePDF.getRowCount(); i++) {
-                    String sTemp=jTablePDF.getValueAt(i, 2).toString().trim();
-                    if(sTemp.length()>0){
-                        sTemp+="\t"+jTablePDF.getValueAt(i, 1)+"\t"+thisMoment;
-                        //for (int j = 0; j < jTablePDF.getColumnCount(); j++) {
-                            //os.print(jTablePDF.getValueAt(i, j).toString() + "\t");
-                        //}
-                        os.println(sTemp);
+        if(sCurrentReport.length()>0 && jTablePDF.getRowCount()>0){
+            JFileChooser fileChooser=new JFileChooser();
+            int returnVal = fileChooser.showSaveDialog(new JFrame());
+            if (returnVal == JFileChooser.APPROVE_OPTION) {
+                try {
+                    File file = fileChooser.getSelectedFile();
+                    jLabelStatus.setText("Saving file "+file.toString());
+                    PrintWriter os = new PrintWriter(file);
+                    //os.println("Name\t"+jTextFieldName.getText());
+                    //os.println("DateCollected\t"+jTextFieldDateCollected.getText());
+                    os.println("key\tvalue\tmeasuredAt");
+                    String thisMoment = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+                                  .withZone(ZoneOffset.UTC)
+                                  .format(Instant.now());
+                    String[] dateSplit=jTextFieldDateCollected.getText().split("/");
+                    if(dateSplit.length==3){
+                        if(dateSplit[0].length()==1)
+                            dateSplit[0]="0"+dateSplit[0];
+                        if(dateSplit[1].length()==1)
+                            dateSplit[1]="0"+dateSplit[1];
+                        thisMoment=dateSplit[2]+"-"+dateSplit[0]+"-"+dateSplit[1];
                     }
-                }
-                os.close();
-                jLabelStatus.setText("Saving file "+file.toString()+"...Done");
+                    thisMoment+="T00:00:00.000Z";
+                    for (int i = 0; i < jTablePDF.getRowCount(); i++) {
+                        String sTemp=jTablePDF.getValueAt(i, 2).toString().trim();
+                        if(sTemp.length()>0){
+                            sTemp+="\t"+jTablePDF.getValueAt(i, 1)+"\t"+thisMoment;
+                            //for (int j = 0; j < jTablePDF.getColumnCount(); j++) {
+                                //os.print(jTablePDF.getValueAt(i, j).toString() + "\t");
+                            //}
+                            os.println(sTemp);
+                        }
+                    }
+                    os.close();
+                    jLabelStatus.setText("Saving file "+file.toString()+"...Done");
 
-            } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
             }
         }
     }//GEN-LAST:event_jButtonToCSVActionPerformed
@@ -980,32 +992,10 @@ public class BQLabReportImporter extends javax.swing.JFrame {
 
     private void jButtonUploadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonUploadActionPerformed
         // TODO add your handling code here:
-        /*JFileChooser fileChooser=new JFileChooser();
-        int returnVal = fileChooser.showSaveDialog(new JFrame());
-        if (returnVal == JFileChooser.APPROVE_OPTION) {
-            try {
-                File file = fileChooser.getSelectedFile();
-                jLabelStatus.setText("Saving file "+file.toString());
-                PrintWriter os = new PrintWriter(file);
-                os.println("Name\t"+jTextFieldName.getText());
-                os.println("DateCollected\t"+jTextFieldDateCollected.getText());
-                for (int i = 0; i < jTablePDF.getRowCount(); i++) {
-                    for (int j = 0; j < jTablePDF.getColumnCount(); j++) {
-                        os.print(jTablePDF.getValueAt(i, j).toString() + "\t");
-                    }
-                    os.println("");
-                }
-                os.close();
-                jLabelStatus.setText("Saving file "+file.toString()+"...Done");
-
-            } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-        }*/
         if(sCurrentReport.length()>0 && jTablePDF.getRowCount()>0){
             populate_usernames();
             ((Java2sAutoComboBox)jComboBoxUploadUser).setDataList(userNames);
+            jTextAreaUploadStatus.setText("");
             jDialogUpload.pack();
             jDialogUpload.setVisible(true);
         }else{
@@ -1021,6 +1011,72 @@ public class BQLabReportImporter extends javax.swing.JFrame {
     private void jComboBoxUploadUserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBoxUploadUserActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jComboBoxUploadUserActionPerformed
+
+    private void jButtonUploadSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonUploadSaveActionPerformed
+        // TODO add your handling code here:
+        String thisMoment = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+                                  .withZone(ZoneOffset.UTC)
+                                  .format(Instant.now());
+        String[] dateSplit=jTextFieldDateCollected.getText().split("/");
+        if(dateSplit.length==3){
+            if(dateSplit[0].length()==1)
+                dateSplit[0]="0"+dateSplit[0];
+            if(dateSplit[1].length()==1)
+                dateSplit[1]="0"+dateSplit[1];
+            thisMoment=dateSplit[2]+"-"+dateSplit[0]+"-"+dateSplit[1];
+        }
+        jTextAreaUploadStatus.append("Using date collected: "+thisMoment+"\n");
+        String sPanel=jTextFieldUploadPanel.getText();
+        if(sPanel.length()>0){
+            String sUser=jComboBoxUploadUser.getSelectedItem().toString();
+            String sUserID=username_to_id_map.get(sUser);
+            try{
+                Map<String,Object> payload=new HashMap<>();
+                payload.put("title",sPanel);
+                payload.put("user",sUserID);
+                Map<String,String> headers=new HashMap<>();
+                headers.put("Accept", "application/json");
+                headers.put("Content-type", "application/json");
+                headers.put("authorization","Bearer "+sToken);
+                jTextAreaUploadStatus.append("Creating panel using "+payload.toString()+"\n");
+                JSONObject returnObject=RESTAPIFunctions.http_post("https://staging-api.biorna-quantics.com/api/v1/panels", headers, payload);
+                String panel_id="";
+                if(returnObject.length()>0){
+                        panel_id=returnObject.get("id").toString();
+                        jTextAreaUploadStatus.append("Panel created. Panel ID:"+panel_id+"\n");
+                        Map<String,Object> parameters=new HashMap<>();
+                        parameters.put("model","measurements");
+                        Map<String,String> whereMap=new HashMap<>();
+                        List<Object> measurementsList=new ArrayList<>();
+                        for (int i = 0; i < jTablePDF.getRowCount(); i++) {
+                            String sTemp=jTablePDF.getValueAt(i, 2).toString().trim();
+                            if(sTemp.length()>0){
+                                Map<String,String> measurement=new HashMap<>();
+                                measurement.put("key",sTemp);
+                                measurement.put("value" ,jTablePDF.getValueAt(i, 1).toString());
+                                measurement.put("measuredAt",thisMoment);
+                                measurementsList.add(measurement);
+                            }
+                        }
+                        parameters.put("importRows",measurementsList);
+                        whereMap.put("author",sUserID);
+                        whereMap.put("panelId",panel_id);
+                        whereMap.put("status","pending");
+                        parameters.put("where",whereMap);
+                        returnObject=RESTAPIFunctions.http_post("https://staging-api.biorna-quantics.com/api/v1/import", headers, parameters);
+                        if(returnObject.length()>0){
+                            jTextAreaUploadStatus.append("Uploaded measurements to panel page.\n");
+                        }else{
+                            jTextAreaUploadStatus.append("Failed to upload measurements to panel page.\n");
+                        }
+                }else{
+                    jTextAreaUploadStatus.append("Could not get panel ID. Cannot upload data.\n");
+                }
+            }catch(IOException e){
+                e.printStackTrace();
+            }
+        }
+    }//GEN-LAST:event_jButtonUploadSaveActionPerformed
 
     /**
      * @param args the command line arguments
@@ -1058,7 +1114,7 @@ public class BQLabReportImporter extends javax.swing.JFrame {
     }
     private void get_login_token(){
         try{
-            Map<String,String> payload=new HashMap<>();
+            Map<String,Object> payload=new HashMap<>();
             payload.put("email",sEmail);
             payload.put("password", sPassword);
             Map<String,String> headers=new HashMap<>();
@@ -1089,7 +1145,7 @@ public class BQLabReportImporter extends javax.swing.JFrame {
                     for(int i=0;i<jsonArray.length();i++){
                         JSONObject obj=jsonArray.getJSONObject(i);
                         String sName=obj.getString("firstName")+" "+obj.getString("lastName")+" ("+obj.get("email")+")";
-                        username_to_id_map.put(sName,obj.getString("id"));
+                         username_to_id_map.put(sName,obj.getString("id"));
                         userNames.add(sName);
                     }
                 }

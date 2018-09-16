@@ -3,6 +3,9 @@
 <Form version="1.3" maxVersion="1.9" type="org.netbeans.modules.form.forminfo.JFrameFormInfo">
   <NonVisualComponents>
     <Container class="javax.swing.JDialog" name="jDialogSettings">
+      <Properties>
+        <Property name="modal" type="boolean" value="true"/>
+      </Properties>
 
       <Layout class="org.netbeans.modules.form.compat2.layouts.DesignGridLayout">
         <Property name="columns" type="int" value="2"/>
@@ -88,6 +91,9 @@
       </SubComponents>
     </Container>
     <Container class="javax.swing.JDialog" name="jDialogMapping">
+      <Properties>
+        <Property name="modal" type="boolean" value="true"/>
+      </Properties>
 
       <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout"/>
       <SubComponents>
@@ -300,6 +306,9 @@
       </SubComponents>
     </Container>
     <Container class="javax.swing.JDialog" name="jDialogUpload">
+      <Properties>
+        <Property name="modal" type="boolean" value="true"/>
+      </Properties>
 
       <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout"/>
       <SubComponents>
@@ -377,6 +386,9 @@
                   <Properties>
                     <Property name="text" type="java.lang.String" value="Save"/>
                   </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButtonUploadSaveActionPerformed"/>
+                  </Events>
                 </Component>
                 <Component class="javax.swing.JButton" name="jButtonUploadClose">
                   <Properties>
