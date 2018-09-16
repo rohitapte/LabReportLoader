@@ -23,11 +23,11 @@ import org.json.JSONObject;
  * @author tihor
  */
 public final class RESTAPIFunctions {
-    public static final JSONObject http_post(String sUrl,Map<String,String> header,Map<String,Object> parameters) throws UnsupportedEncodingException,IOException{
+    public static final JSONObject http_post(String sUrl,Map<String,String> header,Map<String,Object> parameters) throws UnsupportedEncodingException,IOException,RESTAPIException{
         JSONObject jsonObject=new JSONObject(parameters);
         JSONObject returnObject=new JSONObject();
         String jsonFormattedMap=jsonObject.toString();
-        System.out.println(jsonFormattedMap);
+        //System.out.println(jsonFormattedMap);
         CloseableHttpClient client=HttpClients.createDefault();
         HttpPost httpPost=new HttpPost(sUrl);
         StringEntity entity = new StringEntity(jsonFormattedMap);
@@ -39,13 +39,15 @@ public final class RESTAPIFunctions {
             int statusCode=response.getStatusLine().getStatusCode();
             if(statusCode>=200 && statusCode<300){
                 returnObject=parseResponseAsJSON(response);
+            }else{
+                throw new RESTAPIException(statusCode+": "+response.getStatusLine().getReasonPhrase());
             }
         }catch(IOException e){
             throw(e);
         }
         return returnObject;
     }
-    public static final JSONObject http_get(String sUrl,Map<String,String> header) throws UnsupportedEncodingException,IOException{
+    public static final JSONObject http_get(String sUrl,Map<String,String> header) throws UnsupportedEncodingException,IOException,RESTAPIException{
         JSONObject returnObject=new JSONObject();
         CloseableHttpClient client=HttpClients.createDefault();
         HttpGet httpGet=new HttpGet(sUrl);
@@ -56,6 +58,8 @@ public final class RESTAPIFunctions {
             int statusCode=response.getStatusLine().getStatusCode();
             if(statusCode>=200 && statusCode<300){
                 returnObject=parseResponseAsJSON(response);
+            }else{
+                throw new RESTAPIException(statusCode+": "+response.getStatusLine().getReasonPhrase());
             }
         }catch(IOException e){
             throw(e);

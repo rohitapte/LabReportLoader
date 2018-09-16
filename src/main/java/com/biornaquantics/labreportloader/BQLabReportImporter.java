@@ -1073,6 +1073,10 @@ public class BQLabReportImporter extends javax.swing.JFrame {
                     jTextAreaUploadStatus.append("Could not get panel ID. Cannot upload data.\n");
                 }
             }catch(IOException e){
+                jTextAreaUploadStatus.append(e.getMessage()+"\n");
+                e.printStackTrace();
+            }catch(RESTAPIException e){
+                jTextAreaUploadStatus.append(e.getMessage()+"\n");
                 e.printStackTrace();
             }
         }
@@ -1127,6 +1131,8 @@ public class BQLabReportImporter extends javax.swing.JFrame {
                 sToken="";
         }catch(IOException e){
             e.printStackTrace();
+        }catch(RESTAPIException e){
+            e.printStackTrace();
         }
     }
     private void populate_usernames(){
@@ -1152,6 +1158,8 @@ public class BQLabReportImporter extends javax.swing.JFrame {
                 java.util.Collections.sort(userNames);
             }
         }catch(IOException e){
+            e.printStackTrace();
+        }catch(RESTAPIException e){
             e.printStackTrace();
         }
     }
