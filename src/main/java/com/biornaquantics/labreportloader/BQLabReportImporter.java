@@ -113,17 +113,29 @@ public class BQLabReportImporter extends javax.swing.JFrame {
 
         jDialogSettings = new javax.swing.JDialog();
         jLabelCMEPDirectory = new javax.swing.JLabel();
+        jPanelCMEPDirectory = new javax.swing.JPanel();
         jTextFieldCMEPDirectory = new javax.swing.JTextField();
+        jButtonCMEPDirectory = new javax.swing.JButton();
         jLabelIgG4Directory = new javax.swing.JLabel();
+        jPanelIgG4Directory = new javax.swing.JPanel();
         jTextFieldIgG4Directory = new javax.swing.JTextField();
+        jButtonIgG4Directory = new javax.swing.JButton();
         jLabelCMEPPDFMapping = new javax.swing.JLabel();
+        jPanelCMEPPDFMapping = new javax.swing.JPanel();
         jTextFieldCMEPPDFMapping = new javax.swing.JTextField();
+        jButtonCMEPPDFMapping = new javax.swing.JButton();
         jLabelCMEPLabToInternalMarker = new javax.swing.JLabel();
+        jPanelCMEPLabToInternalMapping = new javax.swing.JPanel();
         jTextFieldCMEPLabToInternalMarker = new javax.swing.JTextField();
+        jButtonCMEPLabToInternalMapping = new javax.swing.JButton();
         jLabelIgG4PDFMapping = new javax.swing.JLabel();
+        jPanelIgG4PDFMapping = new javax.swing.JPanel();
         jTextFieldIgG4PDFMapping = new javax.swing.JTextField();
+        jButtonIgG4PDFMapping = new javax.swing.JButton();
         jLabelIgG4LabToInternalMarker = new javax.swing.JLabel();
+        jPanelIgG4LanToInternalMapping = new javax.swing.JPanel();
         jTextFieldIgG4LabToInternalMarker = new javax.swing.JTextField();
+        jButtonIgG4LanToInternalMapping = new javax.swing.JButton();
         jPanelEmpty = new javax.swing.JPanel();
         jPanelButtons = new javax.swing.JPanel();
         jButtonSave = new javax.swing.JButton();
@@ -204,32 +216,104 @@ public class BQLabReportImporter extends javax.swing.JFrame {
         jLabelCMEPDirectory.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabelCMEPDirectory.setText("CMEP Directory:");
         jDialogSettings.getContentPane().add(jLabelCMEPDirectory);
-        jDialogSettings.getContentPane().add(jTextFieldCMEPDirectory);
+
+        jPanelCMEPDirectory.setLayout(new java.awt.BorderLayout());
+        jPanelCMEPDirectory.add(jTextFieldCMEPDirectory, java.awt.BorderLayout.CENTER);
+
+        jButtonCMEPDirectory.setText("...");
+        jButtonCMEPDirectory.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonCMEPDirectoryActionPerformed(evt);
+            }
+        });
+        jPanelCMEPDirectory.add(jButtonCMEPDirectory, java.awt.BorderLayout.EAST);
+
+        jDialogSettings.getContentPane().add(jPanelCMEPDirectory);
 
         jLabelIgG4Directory.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabelIgG4Directory.setText("IgG4 Directory:");
         jDialogSettings.getContentPane().add(jLabelIgG4Directory);
-        jDialogSettings.getContentPane().add(jTextFieldIgG4Directory);
+
+        jPanelIgG4Directory.setLayout(new java.awt.BorderLayout());
+        jPanelIgG4Directory.add(jTextFieldIgG4Directory, java.awt.BorderLayout.CENTER);
+
+        jButtonIgG4Directory.setText("...");
+        jButtonIgG4Directory.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonIgG4DirectoryActionPerformed(evt);
+            }
+        });
+        jPanelIgG4Directory.add(jButtonIgG4Directory, java.awt.BorderLayout.EAST);
+
+        jDialogSettings.getContentPane().add(jPanelIgG4Directory);
 
         jLabelCMEPPDFMapping.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabelCMEPPDFMapping.setText("CMEP PDF Mapping:");
         jDialogSettings.getContentPane().add(jLabelCMEPPDFMapping);
-        jDialogSettings.getContentPane().add(jTextFieldCMEPPDFMapping);
+
+        jPanelCMEPPDFMapping.setLayout(new java.awt.BorderLayout());
+        jPanelCMEPPDFMapping.add(jTextFieldCMEPPDFMapping, java.awt.BorderLayout.CENTER);
+
+        jButtonCMEPPDFMapping.setText("...");
+        jButtonCMEPPDFMapping.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonCMEPPDFMappingActionPerformed(evt);
+            }
+        });
+        jPanelCMEPPDFMapping.add(jButtonCMEPPDFMapping, java.awt.BorderLayout.EAST);
+
+        jDialogSettings.getContentPane().add(jPanelCMEPPDFMapping);
 
         jLabelCMEPLabToInternalMarker.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabelCMEPLabToInternalMarker.setText("CMEP Lab to Internal Marker:");
         jDialogSettings.getContentPane().add(jLabelCMEPLabToInternalMarker);
-        jDialogSettings.getContentPane().add(jTextFieldCMEPLabToInternalMarker);
+
+        jPanelCMEPLabToInternalMapping.setLayout(new java.awt.BorderLayout());
+        jPanelCMEPLabToInternalMapping.add(jTextFieldCMEPLabToInternalMarker, java.awt.BorderLayout.CENTER);
+
+        jButtonCMEPLabToInternalMapping.setText("...");
+        jButtonCMEPLabToInternalMapping.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonCMEPLabToInternalMappingActionPerformed(evt);
+            }
+        });
+        jPanelCMEPLabToInternalMapping.add(jButtonCMEPLabToInternalMapping, java.awt.BorderLayout.LINE_END);
+
+        jDialogSettings.getContentPane().add(jPanelCMEPLabToInternalMapping);
 
         jLabelIgG4PDFMapping.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabelIgG4PDFMapping.setText("IgG4 PDF Mapping:");
         jDialogSettings.getContentPane().add(jLabelIgG4PDFMapping);
-        jDialogSettings.getContentPane().add(jTextFieldIgG4PDFMapping);
+
+        jPanelIgG4PDFMapping.setLayout(new java.awt.BorderLayout());
+        jPanelIgG4PDFMapping.add(jTextFieldIgG4PDFMapping, java.awt.BorderLayout.CENTER);
+
+        jButtonIgG4PDFMapping.setText("...");
+        jButtonIgG4PDFMapping.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonIgG4PDFMappingActionPerformed(evt);
+            }
+        });
+        jPanelIgG4PDFMapping.add(jButtonIgG4PDFMapping, java.awt.BorderLayout.LINE_END);
+
+        jDialogSettings.getContentPane().add(jPanelIgG4PDFMapping);
 
         jLabelIgG4LabToInternalMarker.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabelIgG4LabToInternalMarker.setText("IgG4 Lab to Internal Marker:");
         jDialogSettings.getContentPane().add(jLabelIgG4LabToInternalMarker);
-        jDialogSettings.getContentPane().add(jTextFieldIgG4LabToInternalMarker);
+
+        jPanelIgG4LanToInternalMapping.setLayout(new java.awt.BorderLayout());
+        jPanelIgG4LanToInternalMapping.add(jTextFieldIgG4LabToInternalMarker, java.awt.BorderLayout.CENTER);
+
+        jButtonIgG4LanToInternalMapping.setText("...");
+        jButtonIgG4LanToInternalMapping.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonIgG4LanToInternalMappingActionPerformed(evt);
+            }
+        });
+        jPanelIgG4LanToInternalMapping.add(jButtonIgG4LanToInternalMapping, java.awt.BorderLayout.LINE_END);
+
+        jDialogSettings.getContentPane().add(jPanelIgG4LanToInternalMapping);
         jDialogSettings.getContentPane().add(jPanelEmpty);
 
         jPanelButtons.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT));
@@ -1082,6 +1166,91 @@ public class BQLabReportImporter extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_jButtonUploadSaveActionPerformed
 
+    private void jButtonCMEPDirectoryActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCMEPDirectoryActionPerformed
+        // TODO add your handling code here:
+        JFileChooser chooser = new JFileChooser(); 
+        chooser.setCurrentDirectory(new java.io.File(jTextFieldCMEPDirectory.getText()));
+        chooser.setDialogTitle("Select Directory");
+        chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        //
+        // disable the "All files" option.
+        //
+        chooser.setAcceptAllFileFilterUsed(false);
+        if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION)
+            jTextFieldCMEPDirectory.setText(chooser.getSelectedFile().toString());
+
+    }//GEN-LAST:event_jButtonCMEPDirectoryActionPerformed
+
+    private void jButtonIgG4DirectoryActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonIgG4DirectoryActionPerformed
+        // TODO add your handling code here:
+        JFileChooser chooser = new JFileChooser(); 
+        chooser.setCurrentDirectory(new java.io.File(jTextFieldIgG4Directory.getText()));
+        chooser.setDialogTitle("Select Directory");
+        chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        //
+        // disable the "All files" option.
+        //
+        chooser.setAcceptAllFileFilterUsed(false);
+        if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION)
+            jTextFieldIgG4Directory.setText(chooser.getSelectedFile().toString());
+    }//GEN-LAST:event_jButtonIgG4DirectoryActionPerformed
+
+    private void jButtonCMEPPDFMappingActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCMEPPDFMappingActionPerformed
+        // TODO add your handling code here:
+        JFileChooser chooser = new JFileChooser(); 
+        chooser.setCurrentDirectory(new java.io.File(jTextFieldCMEPPDFMapping.getText()));
+        chooser.setDialogTitle("Select CMEP PDF Map file");
+        chooser.addChoosableFileFilter(new FileNameExtensionFilter("JSON Files", "json"));
+        //
+        // disable the "All files" option.
+        //
+        chooser.setAcceptAllFileFilterUsed(false);
+        if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION)
+            jTextFieldCMEPPDFMapping.setText(chooser.getSelectedFile().toString());
+    }//GEN-LAST:event_jButtonCMEPPDFMappingActionPerformed
+
+    private void jButtonCMEPLabToInternalMappingActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCMEPLabToInternalMappingActionPerformed
+        // TODO add your handling code here:
+        JFileChooser chooser = new JFileChooser(); 
+        chooser.setCurrentDirectory(new java.io.File(jTextFieldCMEPLabToInternalMarker.getText()));
+        chooser.setDialogTitle("Select CMEP Lab to internal mapping file");
+        chooser.addChoosableFileFilter(new FileNameExtensionFilter("JSON Files", "json"));
+        //
+        // disable the "All files" option.
+        //
+        chooser.setAcceptAllFileFilterUsed(false);
+        if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION)
+            jTextFieldCMEPLabToInternalMarker.setText(chooser.getSelectedFile().toString());
+    }//GEN-LAST:event_jButtonCMEPLabToInternalMappingActionPerformed
+
+    private void jButtonIgG4PDFMappingActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonIgG4PDFMappingActionPerformed
+        // TODO add your handling code here:
+        JFileChooser chooser = new JFileChooser(); 
+        chooser.setCurrentDirectory(new java.io.File(jTextFieldIgG4PDFMapping.getText()));
+        chooser.setDialogTitle("Select IgG4 PDF Map file");
+        chooser.addChoosableFileFilter(new FileNameExtensionFilter("JSON Files", "json"));
+        //
+        // disable the "All files" option.
+        //
+        chooser.setAcceptAllFileFilterUsed(false);
+        if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION)
+            jTextFieldIgG4PDFMapping.setText(chooser.getSelectedFile().toString());
+    }//GEN-LAST:event_jButtonIgG4PDFMappingActionPerformed
+
+    private void jButtonIgG4LanToInternalMappingActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonIgG4LanToInternalMappingActionPerformed
+        // TODO add your handling code here:
+        JFileChooser chooser = new JFileChooser(); 
+        chooser.setCurrentDirectory(new java.io.File(jTextFieldIgG4LabToInternalMarker.getText()));
+        chooser.setDialogTitle("Select IgG4 Lab to internal mapping file");
+        chooser.addChoosableFileFilter(new FileNameExtensionFilter("JSON Files", "json"));
+        //
+        // disable the "All files" option.
+        //
+        chooser.setAcceptAllFileFilterUsed(false);
+        if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION)
+            jTextFieldIgG4LabToInternalMarker.setText(chooser.getSelectedFile().toString());
+    }//GEN-LAST:event_jButtonIgG4LanToInternalMappingActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -1277,8 +1446,14 @@ public class BQLabReportImporter extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButtonCMEP;
+    private javax.swing.JButton jButtonCMEPDirectory;
+    private javax.swing.JButton jButtonCMEPLabToInternalMapping;
+    private javax.swing.JButton jButtonCMEPPDFMapping;
     private javax.swing.JButton jButtonClose;
     private javax.swing.JButton jButtonFirst;
+    private javax.swing.JButton jButtonIgG4Directory;
+    private javax.swing.JButton jButtonIgG4LanToInternalMapping;
+    private javax.swing.JButton jButtonIgG4PDFMapping;
     private javax.swing.JButton jButtonLast;
     private javax.swing.JButton jButtonMappingClose;
     private javax.swing.JButton jButtonMappingSave;
@@ -1323,8 +1498,14 @@ public class BQLabReportImporter extends javax.swing.JFrame {
     private javax.swing.JMenuItem jMenuItemSettings;
     private javax.swing.JMenu jMenuLabReports;
     private javax.swing.JPanel jPanelButtons;
+    private javax.swing.JPanel jPanelCMEPDirectory;
+    private javax.swing.JPanel jPanelCMEPLabToInternalMapping;
+    private javax.swing.JPanel jPanelCMEPPDFMapping;
     private javax.swing.JPanel jPanelData;
     private javax.swing.JPanel jPanelEmpty;
+    private javax.swing.JPanel jPanelIgG4Directory;
+    private javax.swing.JPanel jPanelIgG4LanToInternalMapping;
+    private javax.swing.JPanel jPanelIgG4PDFMapping;
     private javax.swing.JPanel jPanelMain;
     private javax.swing.JPanel jPanelMappingButtons;
     private javax.swing.JPanel jPanelMappingCMEP;
