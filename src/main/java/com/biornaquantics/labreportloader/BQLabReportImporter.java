@@ -46,8 +46,6 @@ import org.json.JSONObject;
  * @author tihor
  */
 public class BQLabReportImporter extends javax.swing.JFrame {
-    String sEmail="jani.siivola@biorna-quantics.com";
-    String sPassword="bqPassword!";
     String sToken="";
     Map<String,String> username_to_id_map=new HashMap<>();
     List<String> userNames=new ArrayList<>();
@@ -55,7 +53,7 @@ public class BQLabReportImporter extends javax.swing.JFrame {
     PDDocument document=null;
     PDFRenderer renderer=null;
     private float RENDER_DPI=200;
-    String sCMEPLocation="",sIgG4Location="",sIgG4ToPDFLocation="",sIgG4PDFToInternal="",sCMEPToPDFLocation="",sCMEPPDFToInternal="";
+    String sCMEPLocation="",sIgG4Location="",sIgG4ToPDFLocation="",sIgG4PDFToInternal="",sCMEPToPDFLocation="",sCMEPPDFToInternal="",sBQEmail="",sBQPassword="";
     List<String> internalMarkers=new ArrayList<>();
     Java2sAutoComboBox editBox;
     String sCurrentReport="";
@@ -67,12 +65,34 @@ public class BQLabReportImporter extends javax.swing.JFrame {
      * Creates new form BQLabReportImporter
      */
     public BQLabReportImporter() {
+        Properties prop=new Properties();
+        InputStream input = null;
+        
+        try{
+            input=new FileInputStream(System.getProperty("user.dir")+"/config.properties");
+            prop.load(input);
+            sCMEPLocation=prop.getProperty("CMEPLocation");
+            sCMEPToPDFLocation=prop.getProperty("CMEP_PDF_location");
+            sCMEPPDFToInternal=prop.getProperty("CMEP_pdf_to_internal");
+            sIgG4Location=prop.getProperty("IgG4Location");
+            sIgG4ToPDFLocation=prop.getProperty("IgG4_PDF_location");
+            sIgG4PDFToInternal=prop.getProperty("IgG4_pdf_to_internal");
+            sBQEmail=prop.getProperty("BQEmail");
+            sBQPassword=prop.getProperty("BQPassword");
+            
+        }catch(IOException e){
+            String message="Error loading properties file.\n"+e.toString();
+            System.out.println(message);
+            JOptionPane.showMessageDialog(new JFrame(), message, "Dialog",JOptionPane.ERROR_MESSAGE);
+        }
         try{
             internalMarkers=BQJSONParser.parseKeys("keys.txt");
             internalMarkers.add(0,"");
             editBox=new Java2sAutoComboBox(internalMarkers);
         }catch(IOException e){
-            e.printStackTrace();
+            String message="Error occured while parsing keys.\n"+e.toString();
+            System.out.println(message);
+            JOptionPane.showMessageDialog(new JFrame(), message, "Dialog",JOptionPane.ERROR_MESSAGE);
         }
         get_login_token();
         initComponents();
@@ -86,21 +106,7 @@ public class BQLabReportImporter extends javax.swing.JFrame {
         col=jTableMappingIgG4.getColumnModel().getColumn(1);
         col.setCellEditor(new DefaultCellEditor(editBox));
         this.setTitle("Biorna Quantics Lab Report Importer");
-        Properties prop=new Properties();
-        InputStream input = null;
         
-        try{
-            input=new FileInputStream("config.properties");
-            prop.load(input);
-            sCMEPLocation=prop.getProperty("CMEPLocation");
-            sCMEPToPDFLocation=prop.getProperty("CMEP_PDF_location");
-            sCMEPPDFToInternal=prop.getProperty("CMEP_pdf_to_internal");
-            sIgG4Location=prop.getProperty("IgG4Location");
-            sIgG4ToPDFLocation=prop.getProperty("IgG4_PDF_location");
-            sIgG4PDFToInternal=prop.getProperty("IgG4_pdf_to_internal");
-        }catch(IOException e){
-            e.printStackTrace();
-        }
     }
 
     /**
@@ -113,6 +119,10 @@ public class BQLabReportImporter extends javax.swing.JFrame {
     private void initComponents() {
 
         jDialogSettings = new javax.swing.JDialog();
+        jLabelBQEmail = new javax.swing.JLabel();
+        jTextFieldBQEmail = new javax.swing.JTextField();
+        jLabelBQPassword = new javax.swing.JLabel();
+        jPasswordFieldBQPassword = new javax.swing.JPasswordField();
         jLabelCMEPDirectory = new javax.swing.JLabel();
         jPanelCMEPDirectory = new javax.swing.JPanel();
         jTextFieldCMEPDirectory = new javax.swing.JTextField();
@@ -213,7 +223,17 @@ public class BQLabReportImporter extends javax.swing.JFrame {
 
         jDialogSettings.setTitle("Settings");
         jDialogSettings.setModal(true);
-        jDialogSettings.getContentPane().setLayout(new java.awt.GridLayout(7, 2));
+        jDialogSettings.getContentPane().setLayout(new java.awt.GridLayout(9, 2));
+
+        jLabelBQEmail.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        jLabelBQEmail.setText("BQ Email:");
+        jDialogSettings.getContentPane().add(jLabelBQEmail);
+        jDialogSettings.getContentPane().add(jTextFieldBQEmail);
+
+        jLabelBQPassword.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        jLabelBQPassword.setText("BQ Password:");
+        jDialogSettings.getContentPane().add(jLabelBQPassword);
+        jDialogSettings.getContentPane().add(jPasswordFieldBQPassword);
 
         jLabelCMEPDirectory.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabelCMEPDirectory.setText("CMEP Directory:");
@@ -882,7 +902,9 @@ public class BQLabReportImporter extends javax.swing.JFrame {
 
                 } catch (IOException e) {
                     // TODO Auto-generated catch block
-                    e.printStackTrace();
+                    String message="Error loading PDF.\n"+e.toString();
+                    System.out.println(message);
+                    JOptionPane.showMessageDialog(new JFrame(), message, "Dialog",JOptionPane.ERROR_MESSAGE);
                 }
             }
         }
@@ -896,6 +918,8 @@ public class BQLabReportImporter extends javax.swing.JFrame {
         jTextFieldCMEPLabToInternalMarker.setText(sCMEPPDFToInternal);
         jTextFieldIgG4PDFMapping.setText(sIgG4ToPDFLocation);
         jTextFieldIgG4LabToInternalMarker.setText(sIgG4PDFToInternal);
+        jTextFieldBQEmail.setText(sBQEmail);
+        jPasswordFieldBQPassword.setText(sBQPassword);
         jDialogSettings.pack();
         jDialogSettings.setVisible(true);
     }//GEN-LAST:event_jMenuItemSettingsActionPerformed
@@ -908,6 +932,8 @@ public class BQLabReportImporter extends javax.swing.JFrame {
         sCMEPPDFToInternal=jTextFieldCMEPLabToInternalMarker.getText();
         sIgG4ToPDFLocation=jTextFieldIgG4PDFMapping.getText();
         sIgG4PDFToInternal=jTextFieldIgG4LabToInternalMarker.getText();
+        sBQEmail=jTextFieldBQEmail.getText();
+        sBQPassword=String.valueOf(jPasswordFieldBQPassword.getPassword());
     }//GEN-LAST:event_jButtonSaveActionPerformed
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
@@ -915,7 +941,7 @@ public class BQLabReportImporter extends javax.swing.JFrame {
         Properties prop=new Properties();
         OutputStream output=null;
         try{
-            output = new FileOutputStream("config.properties");
+            output = new FileOutputStream(System.getProperty("user.dir")+"/config.properties");
 
             // set the properties value
             prop.setProperty("CMEPLocation", sCMEPLocation);
@@ -924,12 +950,20 @@ public class BQLabReportImporter extends javax.swing.JFrame {
             prop.setProperty("CMEP_pdf_to_internal", sCMEPPDFToInternal);
             prop.setProperty("IgG4_PDF_location", sIgG4ToPDFLocation);
             prop.setProperty("IgG4_pdf_to_internal", sIgG4PDFToInternal);
+            prop.setProperty("BQEmail", sBQEmail);
+            prop.setProperty("BQPassword", sBQPassword);
 
             // save properties to project root folder
             prop.store(output, null);
 
         }catch(IOException e){
-            e.printStackTrace();
+            String message="IOException occured while loading properties file.\n"+e.toString();
+            System.out.println(message);
+            JOptionPane.showMessageDialog(new JFrame(), message, "Dialog",JOptionPane.ERROR_MESSAGE);
+        }catch(NullPointerException e){
+            String message="NullPointerException occured while loading properties file.\n"+e.toString();
+            System.out.println(message);
+            JOptionPane.showMessageDialog(new JFrame(), message, "Dialog",JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_formWindowClosing
 
@@ -964,7 +998,9 @@ public class BQLabReportImporter extends javax.swing.JFrame {
                 tableModel.insertRow(i++, row);
             }
         }catch(IOException e){
-            e.printStackTrace();
+            String message="IOException occured while parsing internal mapping file.\n"+e.toString();
+            System.out.println(message);
+            JOptionPane.showMessageDialog(new JFrame(), message, "Dialog",JOptionPane.ERROR_MESSAGE);
         }
         jDialogMapping.pack();
         jDialogMapping.setVisible(true);
@@ -999,7 +1035,9 @@ public class BQLabReportImporter extends javax.swing.JFrame {
             }
             os.close();
         }catch(FileNotFoundException e){
-            e.printStackTrace();
+            String message="FileNotFoundException occured while saving mapping file.\n"+e.toString();
+            System.out.println(message);
+            JOptionPane.showMessageDialog(new JFrame(), message, "Dialog",JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_jButtonMappingSaveActionPerformed
 
@@ -1166,10 +1204,14 @@ public class BQLabReportImporter extends javax.swing.JFrame {
                 }
             }catch(IOException e){
                 jTextAreaUploadStatus.append(e.getMessage()+"\n");
-                e.printStackTrace();
+                String message="IOException occured while uploading data to BQ.com.\n"+e.toString();
+                System.out.println(message);
+                JOptionPane.showMessageDialog(new JFrame(), message, "Dialog",JOptionPane.ERROR_MESSAGE);
             }catch(RESTAPIException e){
                 jTextAreaUploadStatus.append(e.getMessage()+"\n");
-                e.printStackTrace();
+                String message="RESTAPIException occured while uploading data to BQ.com.\n"+e.toString();
+                System.out.println(message);
+                JOptionPane.showMessageDialog(new JFrame(), message, "Dialog",JOptionPane.ERROR_MESSAGE);
             }
         }
     }//GEN-LAST:event_jButtonUploadSaveActionPerformed
@@ -1296,8 +1338,8 @@ public class BQLabReportImporter extends javax.swing.JFrame {
     private void get_login_token(){
         try{
             Map<String,Object> payload=new HashMap<>();
-            payload.put("email",sEmail);
-            payload.put("password", sPassword);
+            payload.put("email",sBQEmail);
+            payload.put("password", sBQPassword);
             Map<String,String> headers=new HashMap<>();
             headers.put("Accept", "application/json");
             headers.put("Content-type", "application/json");
@@ -1307,9 +1349,13 @@ public class BQLabReportImporter extends javax.swing.JFrame {
             else
                 sToken="";
         }catch(IOException e){
-            e.printStackTrace();
+            String message="IOException occured while loading BQ.comtoken.\n"+e.toString();
+            System.out.println(message);
+            JOptionPane.showMessageDialog(new JFrame(), message, "Dialog",JOptionPane.ERROR_MESSAGE);
         }catch(RESTAPIException e){
-            e.printStackTrace();
+            String message="RESTAPI Exception occured while loading BQ.com Token.\n"+e.toString();
+            System.out.println(message);
+            JOptionPane.showMessageDialog(new JFrame(), message, "Dialog",JOptionPane.ERROR_MESSAGE);
         }
     }
     private void populate_usernames(){
@@ -1335,9 +1381,13 @@ public class BQLabReportImporter extends javax.swing.JFrame {
                 java.util.Collections.sort(userNames);
             }
         }catch(IOException e){
-            e.printStackTrace();
+            String message="IOException occured while loading list of users.\n"+e.toString();
+            System.out.println(message);
+            JOptionPane.showMessageDialog(new JFrame(), message, "Dialog",JOptionPane.ERROR_MESSAGE);
         }catch(RESTAPIException e){
-            e.printStackTrace();
+            String message="RESTAPIException occured while loading list of users.\n"+e.toString();
+            System.out.println(message);
+            JOptionPane.showMessageDialog(new JFrame(), message, "Dialog",JOptionPane.ERROR_MESSAGE);
         }
     }
     private void loadCMEPReport(){
@@ -1478,6 +1528,8 @@ public class BQLabReportImporter extends javax.swing.JFrame {
     private javax.swing.JDialog jDialogUpload;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabelBQEmail;
+    private javax.swing.JLabel jLabelBQPassword;
     private javax.swing.JLabel jLabelCMEPDirectory;
     private javax.swing.JLabel jLabelCMEPLabToInternalMarker;
     private javax.swing.JLabel jLabelCMEPPDFMapping;
@@ -1526,6 +1578,7 @@ public class BQLabReportImporter extends javax.swing.JFrame {
     private javax.swing.JPanel jPanelUploadPane;
     private javax.swing.JPanel jPanelUploadStatus;
     private javax.swing.JPanel jPanelUserDetails;
+    private javax.swing.JPasswordField jPasswordFieldBQPassword;
     private javax.swing.JPopupMenu jPopupMenuCMEP;
     private javax.swing.JPopupMenu jPopupMenuIgG4;
     private javax.swing.JPopupMenu jPopupMenuPDF;
@@ -1538,6 +1591,7 @@ public class BQLabReportImporter extends javax.swing.JFrame {
     private javax.swing.JTable jTableMappingIgG4;
     private javax.swing.JTable jTablePDF;
     private javax.swing.JTextArea jTextAreaUploadStatus;
+    private javax.swing.JTextField jTextFieldBQEmail;
     private javax.swing.JTextField jTextFieldCMEPDirectory;
     private javax.swing.JTextField jTextFieldCMEPLabToInternalMarker;
     private javax.swing.JTextField jTextFieldCMEPPDFMapping;
