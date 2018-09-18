@@ -67,7 +67,7 @@ public class BQLabReportImporter extends javax.swing.JFrame {
      */
     public BQLabReportImporter() {
         try{
-            internalMarkers=BQJSONParser.parseKeys("D:\\BiornaQuantics\\keys.txt");
+            internalMarkers=BQJSONParser.parseKeys("keys.txt");
             internalMarkers.add(0,"");
             editBox=new Java2sAutoComboBox(internalMarkers);
         }catch(IOException e){
