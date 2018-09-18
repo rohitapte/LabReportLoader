@@ -231,6 +231,14 @@
             <Property name="alignment" type="int" value="2"/>
           </Layout>
           <SubComponents>
+            <Component class="javax.swing.JButton" name="jButtonTestDBConnection">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Test"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButtonTestDBConnectionActionPerformed"/>
+              </Events>
+            </Component>
             <Component class="javax.swing.JButton" name="jButtonSave">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Save"/>
@@ -508,9 +516,6 @@
                       <StringArray count="0"/>
                     </Property>
                   </Properties>
-                  <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jComboBoxUploadUserActionPerformed"/>
-                  </Events>
                   <AuxValues>
                     <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new Java2sAutoComboBox(userNames);"/>
                     <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>

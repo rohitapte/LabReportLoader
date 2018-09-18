@@ -49,12 +49,12 @@ public class BQLabReportImporter extends javax.swing.JFrame {
     String sToken="";
     Map<String,String> username_to_id_map=new HashMap<>();
     List<String> userNames=new ArrayList<>();
+    List<String> internalMarkers=new ArrayList<>();
     int currentPage=0;
     PDDocument document=null;
     PDFRenderer renderer=null;
     private float RENDER_DPI=200;
     String sCMEPLocation="",sIgG4Location="",sIgG4ToPDFLocation="",sIgG4PDFToInternal="",sCMEPToPDFLocation="",sCMEPPDFToInternal="",sBQEmail="",sBQPassword="";
-    List<String> internalMarkers=new ArrayList<>();
     Java2sAutoComboBox editBox;
     String sCurrentReport="";
     List<JSONObject> pdf_location_mappings;
@@ -85,16 +85,12 @@ public class BQLabReportImporter extends javax.swing.JFrame {
             System.out.println(message);
             JOptionPane.showMessageDialog(new JFrame(), message, "Dialog",JOptionPane.ERROR_MESSAGE);
         }
-        try{
-            internalMarkers=BQJSONParser.parseKeys("keys.txt");
-            internalMarkers.add(0,"");
-            editBox=new Java2sAutoComboBox(internalMarkers);
-        }catch(IOException e){
-            String message="Error occured while parsing keys.\n"+e.toString();
-            System.out.println(message);
-            JOptionPane.showMessageDialog(new JFrame(), message, "Dialog",JOptionPane.ERROR_MESSAGE);
-        }
         get_login_token();
+        populate_markerKeys();
+        internalMarkers.add(0,"");
+        editBox=new Java2sAutoComboBox(internalMarkers);
+        
+        
         initComponents();
         TableColumnModel colModel=jTablePDF.getColumnModel();
         colModel.getColumn(0).setPreferredWidth(10);  
@@ -149,6 +145,7 @@ public class BQLabReportImporter extends javax.swing.JFrame {
         jButtonIgG4LanToInternalMapping = new javax.swing.JButton();
         jPanelEmpty = new javax.swing.JPanel();
         jPanelButtons = new javax.swing.JPanel();
+        jButtonTestDBConnection = new javax.swing.JButton();
         jButtonSave = new javax.swing.JButton();
         jButtonClose = new javax.swing.JButton();
         jDialogMapping = new javax.swing.JDialog();
@@ -340,6 +337,14 @@ public class BQLabReportImporter extends javax.swing.JFrame {
 
         jPanelButtons.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT));
 
+        jButtonTestDBConnection.setText("Test");
+        jButtonTestDBConnection.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonTestDBConnectionActionPerformed(evt);
+            }
+        });
+        jPanelButtons.add(jButtonTestDBConnection);
+
         jButtonSave.setText("Save");
         jButtonSave.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -508,11 +513,6 @@ public class BQLabReportImporter extends javax.swing.JFrame {
         jLabelUploadUser.setText("Panel User");
         jPanelUploadInputs.add(jLabelUploadUser);
 
-        jComboBoxUploadUser.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jComboBoxUploadUserActionPerformed(evt);
-            }
-        });
         jPanelUploadInputs.add(jComboBoxUploadUser);
 
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
@@ -874,7 +874,7 @@ public class BQLabReportImporter extends javax.swing.JFrame {
                     PrintWriter os = new PrintWriter(file);
                     //os.println("Name\t"+jTextFieldName.getText());
                     //os.println("DateCollected\t"+jTextFieldDateCollected.getText());
-                    os.println("key\tvalue\tmeasuredAt");
+                    os.println("pdf\tkey\tvalue\tmeasuredAt");
                     String thisMoment = DateTimeFormatter.ofPattern("yyyy-MM-dd")
                                   .withZone(ZoneOffset.UTC)
                                   .format(Instant.now());
@@ -890,6 +890,7 @@ public class BQLabReportImporter extends javax.swing.JFrame {
                     for (int i = 0; i < jTablePDF.getRowCount(); i++) {
                         String sTemp=jTablePDF.getValueAt(i, 2).toString().trim();
                         if(sTemp.length()>0){
+                            sTemp=jTablePDF.getValueAt(i, 0).toString().trim()+"\t"+sTemp;
                             sTemp+="\t"+jTablePDF.getValueAt(i, 1)+"\t"+thisMoment;
                             //for (int j = 0; j < jTablePDF.getColumnCount(); j++) {
                                 //os.print(jTablePDF.getValueAt(i, j).toString() + "\t");
@@ -1138,10 +1139,6 @@ public class BQLabReportImporter extends javax.swing.JFrame {
         jDialogUpload.setVisible(false);
     }//GEN-LAST:event_jButtonUploadCloseActionPerformed
 
-    private void jComboBoxUploadUserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBoxUploadUserActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jComboBoxUploadUserActionPerformed
-
     private void jButtonUploadSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonUploadSaveActionPerformed
         // TODO add your handling code here:
         String thisMoment = DateTimeFormatter.ofPattern("yyyy-MM-dd")
@@ -1301,6 +1298,18 @@ public class BQLabReportImporter extends javax.swing.JFrame {
             jTextFieldIgG4LabToInternalMarker.setText(chooser.getSelectedFile().toString());
     }//GEN-LAST:event_jButtonIgG4LanToInternalMappingActionPerformed
 
+    private void jButtonTestDBConnectionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonTestDBConnectionActionPerformed
+        // TODO add your handling code here:
+        sBQEmail=jTextFieldBQEmail.getText();
+        sBQPassword=String.valueOf(jPasswordFieldBQPassword.getPassword());
+        sToken="";
+        get_login_token();
+        if(sToken.length()>0)
+            JOptionPane.showMessageDialog(new JFrame(), "Successfully logged into BQ.com.", "Dialog",JOptionPane.INFORMATION_MESSAGE);
+        else
+            JOptionPane.showMessageDialog(new JFrame(), "Failed to log into BQ.com", "Dialog",JOptionPane.WARNING_MESSAGE);
+    }//GEN-LAST:event_jButtonTestDBConnectionActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -1354,6 +1363,36 @@ public class BQLabReportImporter extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(new JFrame(), message, "Dialog",JOptionPane.ERROR_MESSAGE);
         }catch(RESTAPIException e){
             String message="RESTAPI Exception occured while loading BQ.com Token.\n"+e.toString();
+            System.out.println(message);
+            JOptionPane.showMessageDialog(new JFrame(), message, "Dialog",JOptionPane.ERROR_MESSAGE);
+        }
+    }
+    private void populate_markerKeys(){
+        try{
+            Map<String,String> headers=new HashMap<>();
+            headers.put("Accept", "application/json");
+            headers.put("Content-type", "application/json");
+            
+            headers.put("authorization","Bearer "+sToken);
+            JSONObject returnValue=RESTAPIFunctions.http_get("https://staging-api.biorna-quantics.com/api/v1/list/keys?sort=title%20asc&skip=0&populate=subgroups,criticalities&select=slug",headers);
+            if(returnValue.length()>0){
+                internalMarkers=new ArrayList<>();
+                JSONArray jsonArray=returnValue.getJSONArray("items");
+                if(jsonArray!=null){
+                    for(int i=0;i<jsonArray.length();i++){
+                        JSONObject obj=jsonArray.getJSONObject(i);
+                        String sName=obj.getString("slug");
+                        internalMarkers.add(sName);
+                    }
+                }
+                java.util.Collections.sort(internalMarkers);
+            }
+        }catch(IOException e){
+            String message="IOException occured while loading lab markers."+e.toString();
+            System.out.println(message);
+            JOptionPane.showMessageDialog(new JFrame(), message, "Dialog",JOptionPane.ERROR_MESSAGE);
+        }catch(RESTAPIException e){
+            String message="RESTAPIException occured while loading list of users.\n"+e.toString();
             System.out.println(message);
             JOptionPane.showMessageDialog(new JFrame(), message, "Dialog",JOptionPane.ERROR_MESSAGE);
         }
@@ -1518,6 +1557,7 @@ public class BQLabReportImporter extends javax.swing.JFrame {
     private javax.swing.JButton jButtonNext;
     private javax.swing.JButton jButtonPrevious;
     private javax.swing.JButton jButtonSave;
+    private javax.swing.JButton jButtonTestDBConnection;
     private javax.swing.JButton jButtonToCSV;
     private javax.swing.JButton jButtonUpload;
     private javax.swing.JButton jButtonUploadClose;
