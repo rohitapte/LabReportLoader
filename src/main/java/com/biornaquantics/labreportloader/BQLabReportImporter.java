@@ -61,6 +61,7 @@ public class BQLabReportImporter extends javax.swing.JFrame {
     String sCurrentReport="";
     List<JSONObject> pdf_location_mappings;
     Map<String,String> lab_to_internal_mappings;
+    BufferedImage originalImage=null;
 
     /**
      * Creates new form BQLabReportImporter
@@ -210,6 +211,7 @@ public class BQLabReportImporter extends javax.swing.JFrame {
         jMenuItemCMEP = new javax.swing.JMenuItem();
         jMenuItemIgG4 = new javax.swing.JMenuItem();
 
+        jDialogSettings.setTitle("Settings");
         jDialogSettings.setModal(true);
         jDialogSettings.getContentPane().setLayout(new java.awt.GridLayout(7, 2));
 
@@ -336,6 +338,7 @@ public class BQLabReportImporter extends javax.swing.JFrame {
 
         jDialogSettings.getContentPane().add(jPanelButtons);
 
+        jDialogMapping.setTitle("Mappings");
         jDialogMapping.setModal(true);
 
         jPanelMappingMain.setLayout(new java.awt.GridLayout(1, 1));
@@ -474,6 +477,7 @@ public class BQLabReportImporter extends javax.swing.JFrame {
         });
         jPopupMenuIgG4.add(jMenuItemDeleteIgG4);
 
+        jDialogUpload.setTitle("Upload to BQ.com");
         jDialogUpload.setModal(true);
 
         jPanelUploadPane.setLayout(new java.awt.BorderLayout());
@@ -816,7 +820,11 @@ public class BQLabReportImporter extends javax.swing.JFrame {
 
     private void formComponentResized(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentResized
         // TODO add your handling code here:
-        //renderPage();
+        if(originalImage!=null){
+            BufferedImage image=resizeImage(originalImage,jLabelPDF.getHeight(),jLabelPDF.getWidth());
+            ImageIcon iconLogo = new ImageIcon(image);
+            jLabelPDF.setIcon(iconLogo);
+        }
     }//GEN-LAST:event_formComponentResized
 
     private void jMenuItemExitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemExitActionPerformed
@@ -1394,8 +1402,8 @@ public class BQLabReportImporter extends javax.swing.JFrame {
         if(currentPage<=0)
             return;
         try{
-            BufferedImage image=renderer.renderImageWithDPI(currentPage-1,RENDER_DPI);
-            image=resizeImage(image,jLabelPDF.getHeight(),jLabelPDF.getWidth());
+            originalImage=renderer.renderImageWithDPI(currentPage-1,RENDER_DPI);
+            BufferedImage image=resizeImage(originalImage,jLabelPDF.getHeight(),jLabelPDF.getWidth());
             ImageIcon iconLogo = new ImageIcon(image);
             jLabelPDF.setIcon(iconLogo);
             //jLabelPDF=new javax.swing.JLabel(iconLogo);
