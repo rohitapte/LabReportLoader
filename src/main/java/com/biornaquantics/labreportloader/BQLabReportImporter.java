@@ -1404,7 +1404,7 @@ public class BQLabReportImporter extends javax.swing.JFrame {
             headers.put("Content-type", "application/json");
             
             headers.put("authorization","Bearer "+sToken);
-            JSONObject returnValue=RESTAPIFunctions.http_get("https://staging-api.biorna-quantics.com/api/v1/list/users?sort=firstName%20ASC&skip=NaN&limit=50&select=firstName,lastName,email",headers);
+            JSONObject returnValue=RESTAPIFunctions.http_get("https://staging-api.biorna-quantics.com/api/v1/list/users?sort=firstName%20ASC&skip=NaN&select=firstName,lastName,email",headers);
             if(returnValue.length()>0){
                 userNames=new ArrayList<>();
                 username_to_id_map=new HashMap<String,String>();
