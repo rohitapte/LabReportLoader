@@ -1164,6 +1164,7 @@ public class BQLabReportImporter extends javax.swing.JFrame {
                 Map<String,String> headers=new HashMap<>();
                 headers.put("Accept", "application/json");
                 headers.put("Content-type", "application/json");
+                headers.put("origin","https://lab.biorna-quantics.com");
                 headers.put("authorization","Bearer "+sToken);
                 jTextAreaUploadStatus.append("Creating panel using "+payload.toString()+"\n");
                 JSONObject returnObject=RESTAPIFunctions.http_post("https://staging-api.biorna-quantics.com/api/v1/panels", headers, payload);
@@ -1352,6 +1353,7 @@ public class BQLabReportImporter extends javax.swing.JFrame {
             Map<String,String> headers=new HashMap<>();
             headers.put("Accept", "application/json");
             headers.put("Content-type", "application/json");
+            headers.put("origin","https://lab.biorna-quantics.com");
             JSONObject returnObject=RESTAPIFunctions.http_post("https://staging-api.biorna-quantics.com/api/v1/auth", headers, payload);
             if(returnObject.length()>0)
                 sToken=returnObject.get("token").toString();
@@ -1372,7 +1374,7 @@ public class BQLabReportImporter extends javax.swing.JFrame {
             Map<String,String> headers=new HashMap<>();
             headers.put("Accept", "application/json");
             headers.put("Content-type", "application/json");
-            
+            headers.put("origin","https://lab.biorna-quantics.com");
             headers.put("authorization","Bearer "+sToken);
             JSONObject returnValue=RESTAPIFunctions.http_get("https://staging-api.biorna-quantics.com/api/v1/list/keys?sort=title%20asc&skip=0&populate=subgroups,criticalities&select=slug",headers);
             if(returnValue.length()>0){
