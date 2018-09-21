@@ -25,6 +25,17 @@ import java.util.List;
 import java.util.Map;
 
 public class PDFExtractor {
+    public static String ExtractPageText(String pdfFile,int page) throws IOException{
+        try{
+            PdfDocument pdfDoc=new PdfDocument(new PdfReader(pdfFile)); 
+            String sText=PdfTextExtractor.getTextFromPage(pdfDoc.getPage(page));
+            pdfDoc.close();
+            return sText;
+        } catch (IOException e) {
+            System.out.println("Could not find file "+pdfFile);
+            throw(e);
+        }
+    }
     public static Map<String,String> ExtractCMEPPDFData(String pdfFile, List<JSONObject> jsonData) throws IOException{
         Map<String,String> returnValues=new LinkedHashMap<>();
         returnValues.put("Name_ReportDetails","");
