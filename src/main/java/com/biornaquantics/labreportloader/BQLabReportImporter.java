@@ -1448,12 +1448,17 @@ public class BQLabReportImporter extends javax.swing.JFrame {
                 sCMEPLocation=selectedFile.getParent();
                 String sFileWithPath=selectedFile.getAbsolutePath();
                 jLabelStatus.setText("Status: Parsing "+sFileWithPath);
-                Map<String,String> pdfExtract= PDFExtractor.ExtractCMEPPDFData(sFileWithPath,pdf_location_mappings);
-                displayPdf(pdfExtract,lab_to_internal_mappings);
-                currentPage=1;
-                document=PDDocument.load(selectedFile);
-                renderer = new PDFRenderer(document);
-                renderPage();
+                String sText=PDFExtractor.ExtractPageText(sFileWithPath,1);
+                if(!(sText.contains("Metabolic") && sText.contains("Markers"))){
+                    JOptionPane.showMessageDialog(new JFrame(),"This doesnt appear to be a CMEP report. Please check the file.","Incorrect PDF format",JOptionPane.WARNING_MESSAGE);
+                }else{
+                    Map<String,String> pdfExtract= PDFExtractor.ExtractCMEPPDFData(sFileWithPath,pdf_location_mappings);
+                    displayPdf(pdfExtract,lab_to_internal_mappings);
+                    currentPage=1;
+                    document=PDDocument.load(selectedFile);
+                    renderer = new PDFRenderer(document);
+                    renderPage();
+                }
             }
         }catch(IOException e){
             String message="Error occured while parsing pdf file.\n"+e.toString();
@@ -1477,12 +1482,17 @@ public class BQLabReportImporter extends javax.swing.JFrame {
                 String sFileWithPath=selectedFile.getAbsolutePath();
                 sIgG4Location=selectedFile.getParent();
                 jLabelStatus.setText("Status: Parsing "+sFileWithPath);
-                Map<String,String> pdfExtract= PDFExtractor.ExtractIgG4PDFData(sFileWithPath,pdf_location_mappings);
-                displayPdf(pdfExtract,lab_to_internal_mappings);
-                currentPage=1;
-                document=PDDocument.load(selectedFile);
-                renderer = new PDFRenderer(document);
-                renderPage();
+                String sText=PDFExtractor.ExtractPageText(sFileWithPath,1);
+                if(!(sText.contains("ALLERGEN") && sText.contains("RESULT"))){
+                    JOptionPane.showMessageDialog(new JFrame(),"This doesnt appear to be an IgG4 food sensitivity report. Please check the file.","Incorrect PDF format",JOptionPane.WARNING_MESSAGE);
+                }else{
+                    Map<String,String> pdfExtract= PDFExtractor.ExtractIgG4PDFData(sFileWithPath,pdf_location_mappings);
+                    displayPdf(pdfExtract,lab_to_internal_mappings);
+                    currentPage=1;
+                    document=PDDocument.load(selectedFile);
+                    renderer = new PDFRenderer(document);
+                    renderPage();
+                }
             }
         }catch(IOException e){
             String message="Error occured while parsing pdf file.\n"+e.toString();
