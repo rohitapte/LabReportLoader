@@ -400,6 +400,8 @@ public class BQLabReportImporter extends javax.swing.JFrame {
 
         jTabbedPaneMapping.addTab("CMEP", jPanelMappingCMEP);
 
+        jPanelMappingIgG4.setLayout(new java.awt.BorderLayout());
+
         jTableMappingIgG4.setAutoCreateRowSorter(true);
         jTableMappingIgG4.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -426,7 +428,7 @@ public class BQLabReportImporter extends javax.swing.JFrame {
         });
         jScrollPaneMappingIgG4.setViewportView(jTableMappingIgG4);
 
-        jPanelMappingIgG4.add(jScrollPaneMappingIgG4);
+        jPanelMappingIgG4.add(jScrollPaneMappingIgG4, java.awt.BorderLayout.CENTER);
 
         jTabbedPaneMapping.addTab("IgG4", jPanelMappingIgG4);
 
