@@ -42,37 +42,84 @@ public class Test {
             String sFileWithPath="D:\\BiornaQuantics\\Food Sensitivities IgG4\\FoodS_Abi Tyrrell_2016.06.02.pdf"; 
             //String sFileWithPath="D:\\BiornaQuantics\\Food Sensitivities IgG4\\FoodS_Abi Tyrrell_2016.06.02.pdf"; 
             Map<String,String> sTemp; 
-            File folder = new File("D:\\BiornaQuantics\\Complete Metabolic Energy Profile\\"); 
-            File[] listOfFiles = folder.listFiles(); 
+            File folder = new File("D:\\BiornaQuantics\\GI-MAP\\"); 
+            File[] listOfFiles = folder.listFiles();
             for(int i=0;i<listOfFiles.length;i++){ 
                 if(i<1) 
-                    continue; 
-                //sTemp=ExtractIgG4PDFData(listOfFiles[i].getAbsolutePath(),pdf_location_mappings); 
-                ExtractGMAPData(listOfFiles[i].getAbsolutePath());
-                //for(String key:sTemp.keySet()) 
-                //    System.out.println(key+":"+sTemp.get(key)); 
+                    continue;
+                //String sZZZ=listOfFiles[i].getAbsolutePath();
+                
+                //if(sZZZ.equals("D:\\BiornaQuantics\\GI-MAP\\GIMAPZ_Michelle Saddington_2018.07.30.pdf")){
+                //    System.out.println(i+":"+listOfFiles[i].getAbsolutePath());
+                //    sZZZ=PDFExtractor.ExtractPageText(sZZZ,2);
+                //    System.out.println(sZZZ);
+                //}
+                sTemp=ExtractGIMAPData(listOfFiles[i].getAbsolutePath()); 
+                
+                for(String key:sTemp.keySet()) 
+                    System.out.println(key+":"+sTemp.get(key)); 
                 //if(i>5) 
-                    break; 
+                //    break; 
             } 
         }catch(IOException e){ 
             e.printStackTrace(); 
         } 
     } 
-    public static void ExtractGMAPData(String pdfFile){
-        System.out.println("Adfads");
-        try{
+    public static Map<String,String> ExtractGIMAPData(String pdfFile) throws IOException{
+        System.out.println(pdfFile); 
+        Map<String,String> returnValues=new LinkedHashMap<>(); 
+        try { 
             PdfDocument pdfDoc=new PdfDocument(new PdfReader(pdfFile)); 
-            String sText=PdfTextExtractor.getTextFromPage(pdfDoc.getPage(1));
-            System.out.println(sText);
-            if(sText.contains("ALLERGEN") && sText.contains("RESULT")){
-                System.out.println("Food Sensitivity");
-            }
-            if(sText.contains("Metabolic") && sText.contains("Markers")){
-                System.out.println("CMEP");
-            }
-        }catch(IOException e){
-            e.printStackTrace();
-        }
+            Rectangle rect = new Rectangle(300,680,80,10); 
+            TextRegionEventFilter regionFilter = new TextRegionEventFilter(rect); 
+            ITextExtractionStrategy strategy = new FilteredTextEventListener(new LocationTextExtractionStrategy(), regionFilter); 
+            String value = PdfTextExtractor.getTextFromPage(pdfDoc.getPage(2), strategy).trim();
+            if(value.length()>0)
+                value=value.replace("Patient: ","");
+            //System.out.println(value);
+            returnValues.put("Name_ReportDetails",value); 
+            rect = new Rectangle(300,660,80,10); 
+            regionFilter = new TextRegionEventFilter(rect); 
+            strategy = new FilteredTextEventListener(new LocationTextExtractionStrategy(), regionFilter); 
+            value = PdfTextExtractor.getTextFromPage(pdfDoc.getPage(2), strategy).trim();
+            value=value.split("\n")[0]; 
+            value=value.replace(" ","").replace("Collected:","").replace("Received:",""); 
+            returnValues.put("DateOfCollection_ReportDetails",value);
+            //System.out.println(value);
+            //value=value.split("\n")[0]; 
+            //value=value.replace(" ","").replace("Collected:","").replace("Received:",""); 
+            //returnValues.put("DateOfCollection_ReportDetails",value);  
+            /*for(int page=1;page<=2;page++){ 
+                for(float y=610;y>=40;y--){ 
+                    rect = new Rectangle(35,y,30,10); 
+                    regionFilter = new TextRegionEventFilter(rect); 
+                    strategy = new FilteredTextEventListener(new LocationTextExtractionStrategy(), regionFilter); 
+                    value = PdfTextExtractor.getTextFromPage(pdfDoc.getPage(page), strategy).trim(); 
+                    rect = new Rectangle(250,y,60,10); 
+                    regionFilter = new TextRegionEventFilter(rect); 
+                    strategy = new FilteredTextEventListener(new LocationTextExtractionStrategy(), regionFilter); 
+                    String field = PdfTextExtractor.getTextFromPage(pdfDoc.getPage(page), strategy).trim(); 
+                    if(field.length()>0 && value.length()>0){ 
+                        if(value.contains("\n")){ 
+                            String[] temp=value.split("\n"); 
+                            if(temp.length>1) 
+                                value=temp[1].trim(); 
+                        } 
+                        if(field.contains("\n")){ 
+                            String[] temp=field.split("\n"); 
+                            field=temp[0].trim(); 
+                        } 
+                        if(!field.toUpperCase().equals(field)) 
+                        //System.out.println("Field:"+field+" Value:"+str+" Field len:"+field.length()+" Value len:"+str.length()); 
+                            returnValues.put(field+"_Measurement",value); 
+                    } 
+                } 
+            }*/ 
+        } catch (IOException e) { 
+            System.out.println("Could not find file "+pdfFile); 
+            throw(e); 
+        } 
+        return returnValues;
     }
     public static Map<String,String> ExtractIgG4PDFData(String pdfFile, List<JSONObject> jsonData) throws IOException{ 
         System.out.println(pdfFile); 
@@ -90,7 +137,7 @@ public class Test {
             value = PdfTextExtractor.getTextFromPage(pdfDoc.getPage(1), strategy).trim(); 
             value=value.split("\n")[0]; 
             value=value.replace(" ","").replace("Collected:","").replace("Received:",""); 
-            returnValues.put("DateOfCollection_ReportDetails",value);             
+            returnValues.put("DateOfCollection_ReportDetails",value);           
             for(int page=1;page<=2;page++){ 
                 for(float y=610;y>=40;y--){ 
                     rect = new Rectangle(35,y,30,10); 
