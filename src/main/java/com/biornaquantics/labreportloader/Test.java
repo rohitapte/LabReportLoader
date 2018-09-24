@@ -37,15 +37,16 @@ import org.json.JSONObject;
 public class Test { 
     public static void main(String[] args){ 
         try{ 
-            List<JSONObject> pdf_location_mappings = BQJSONParser.parseJSONFile("D:\\BiornaQuantics\\pdf_mapping_IgG4.json"); 
-            Map<String,String> lab_to_internal_mappings=BQJSONParser.parseLabToInternalMappingJSON("D:\\BiornaQuantics\\lab_to_internal_mapping_IgG4.json"); 
-            String sFileWithPath="D:\\BiornaQuantics\\Food Sensitivities IgG4\\FoodS_Abi Tyrrell_2016.06.02.pdf"; 
-            //String sFileWithPath="D:\\BiornaQuantics\\Food Sensitivities IgG4\\FoodS_Abi Tyrrell_2016.06.02.pdf"; 
-            Map<String,String> sTemp; 
-            File folder = new File("D:\\BiornaQuantics\\GI-MAP\\"); 
+            //List<JSONObject> pdf_location_mappings = BQJSONParser.parseJSONFile("D:\\BiornaQuantics\\pdf_mapping_IgG4.json");
+            //Map<String,String> lab_to_internal_mappings=BQJSONParser.parseLabToInternalMappingJSON("D:\\BiornaQuantics\\lab_to_internal_mapping_IgG4.json");
+            //String sFileWithPath="D:\\BiornaQuantics\\Food Sensitivities IgG4\\FoodS_Abi Tyrrell_2016.06.02.pdf";
+            //String sFileWithPath="D:\\BiornaQuantics\\Food Sensitivities IgG4\\FoodS_Abi Tyrrell_2016.06.02.pdf";
+            Map<String,String> sTemp;
+            //File folder = new File("D:\\BiornaQuantics\\GI-MAP\\");
+            File folder = new File("C:\\Users\\tihor\\Documents\\BiornaQuantics\\GI-MAP\\");
             File[] listOfFiles = folder.listFiles();
             for(int i=0;i<listOfFiles.length;i++){ 
-                if(i<1) 
+                if(i<2) 
                     continue;
                 //String sZZZ=listOfFiles[i].getAbsolutePath();
                 
@@ -59,7 +60,7 @@ public class Test {
                 for(String key:sTemp.keySet()) 
                     System.out.println(key+":"+sTemp.get(key)); 
                 //if(i>5) 
-                //    break; 
+                    break; 
             } 
         }catch(IOException e){ 
             e.printStackTrace(); 
@@ -89,32 +90,37 @@ public class Test {
             //value=value.split("\n")[0]; 
             //value=value.replace(" ","").replace("Collected:","").replace("Received:",""); 
             //returnValues.put("DateOfCollection_ReportDetails",value);  
-            /*for(int page=1;page<=2;page++){ 
-                for(float y=610;y>=40;y--){ 
-                    rect = new Rectangle(35,y,30,10); 
-                    regionFilter = new TextRegionEventFilter(rect); 
-                    strategy = new FilteredTextEventListener(new LocationTextExtractionStrategy(), regionFilter); 
-                    value = PdfTextExtractor.getTextFromPage(pdfDoc.getPage(page), strategy).trim(); 
-                    rect = new Rectangle(250,y,60,10); 
+            for(int page=2;page<=5;page++){ 
+                for(float y=700;y>=40;y-=10){ 
+                    rect = new Rectangle(35,y,100,10); 
                     regionFilter = new TextRegionEventFilter(rect); 
                     strategy = new FilteredTextEventListener(new LocationTextExtractionStrategy(), regionFilter); 
                     String field = PdfTextExtractor.getTextFromPage(pdfDoc.getPage(page), strategy).trim(); 
-                    if(field.length()>0 && value.length()>0){ 
-                        if(value.contains("\n")){ 
-                            String[] temp=value.split("\n"); 
-                            if(temp.length>1) 
-                                value=temp[1].trim(); 
-                        } 
-                        if(field.contains("\n")){ 
-                            String[] temp=field.split("\n"); 
-                            field=temp[0].trim(); 
-                        } 
-                        if(!field.toUpperCase().equals(field)) 
-                        //System.out.println("Field:"+field+" Value:"+str+" Field len:"+field.length()+" Value len:"+str.length()); 
-                            returnValues.put(field+"_Measurement",value); 
-                    } 
-                } 
-            }*/ 
+                    rect = new Rectangle(250,y,60,10); 
+                    regionFilter = new TextRegionEventFilter(rect); 
+                    strategy = new FilteredTextEventListener(new LocationTextExtractionStrategy(), regionFilter); 
+                    value = PdfTextExtractor.getTextFromPage(pdfDoc.getPage(page), strategy).trim();
+                    rect = new Rectangle(464,y,60,10); 
+                    regionFilter = new TextRegionEventFilter(rect); 
+                    strategy = new FilteredTextEventListener(new LocationTextExtractionStrategy(), regionFilter); 
+                    String range = PdfTextExtractor.getTextFromPage(pdfDoc.getPage(page), strategy).trim();
+                    if(field.length()>0 && value.length()>0 ){
+                        if(!value.contains("Result")){
+                            //System.out.println(field+"\t"+value+"\t"+range);
+                            value=value.replace("<dl","0");
+                            value=value.replace("N/A","Negative");
+                            try{
+                                double dTemp=Double.parseDouble(value);
+                                value=""+dTemp;
+                            }catch(NumberFormatException e){
+                                //do nothing
+                                //System.out.println(field+"\t"+value+"\t"+range);
+                            }
+                            returnValues.put(field+"_Measurement",value);
+                        }
+                    }
+                }
+            }
         } catch (IOException e) { 
             System.out.println("Could not find file "+pdfFile); 
             throw(e); 

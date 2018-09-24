@@ -114,4 +114,64 @@ public class PDFExtractor {
         }
         return returnValues;
     }
+    public static Map<String,String> ExtractGIMAPData(String pdfFile) throws IOException{
+        Map<String,String> returnValues=new LinkedHashMap<>(); 
+        try { 
+            PdfDocument pdfDoc=new PdfDocument(new PdfReader(pdfFile)); 
+            Rectangle rect = new Rectangle(300,680,80,10); 
+            TextRegionEventFilter regionFilter = new TextRegionEventFilter(rect); 
+            ITextExtractionStrategy strategy = new FilteredTextEventListener(new LocationTextExtractionStrategy(), regionFilter); 
+            String value = PdfTextExtractor.getTextFromPage(pdfDoc.getPage(2), strategy).trim();
+            if(value.length()>0)
+                value=value.replace("Patient: ","");
+            //System.out.println(value);
+            returnValues.put("Name_ReportDetails",value); 
+            rect = new Rectangle(300,660,80,10); 
+            regionFilter = new TextRegionEventFilter(rect); 
+            strategy = new FilteredTextEventListener(new LocationTextExtractionStrategy(), regionFilter); 
+            value = PdfTextExtractor.getTextFromPage(pdfDoc.getPage(2), strategy).trim();
+            value=value.split("\n")[0]; 
+            value=value.replace(" ","").replace("Collected:","").replace("Received:",""); 
+            returnValues.put("DateOfCollection_ReportDetails",value);
+            //System.out.println(value);
+            //value=value.split("\n")[0]; 
+            //value=value.replace(" ","").replace("Collected:","").replace("Received:",""); 
+            //returnValues.put("DateOfCollection_ReportDetails",value);  
+            for(int page=2;page<=5;page++){ 
+                for(float y=700;y>=40;y-=10){ 
+                    rect = new Rectangle(35,y,100,10); 
+                    regionFilter = new TextRegionEventFilter(rect); 
+                    strategy = new FilteredTextEventListener(new LocationTextExtractionStrategy(), regionFilter); 
+                    String field = PdfTextExtractor.getTextFromPage(pdfDoc.getPage(page), strategy).trim(); 
+                    rect = new Rectangle(250,y,60,10); 
+                    regionFilter = new TextRegionEventFilter(rect); 
+                    strategy = new FilteredTextEventListener(new LocationTextExtractionStrategy(), regionFilter); 
+                    value = PdfTextExtractor.getTextFromPage(pdfDoc.getPage(page), strategy).trim();
+                    rect = new Rectangle(464,y,60,10); 
+                    regionFilter = new TextRegionEventFilter(rect); 
+                    strategy = new FilteredTextEventListener(new LocationTextExtractionStrategy(), regionFilter); 
+                    String range = PdfTextExtractor.getTextFromPage(pdfDoc.getPage(page), strategy).trim();
+                    if(field.length()>0 && value.length()>0 ){
+                        if(!value.contains("Result")){
+                            //System.out.println(field+"\t"+value+"\t"+range);
+                            value=value.replace("<dl","0");
+                            value=value.replace("N/A","Negative");
+                            try{
+                                double dTemp=Double.parseDouble(value);
+                                value=""+dTemp;
+                            }catch(NumberFormatException e){
+                                //do nothing
+                                //System.out.println(field+"\t"+value+"\t"+range);
+                            }
+                            returnValues.put(field+"_Measurement",value);
+                        }
+                    }
+                }
+            }
+        } catch (IOException e) { 
+            System.out.println("Could not find file "+pdfFile); 
+            throw(e); 
+        } 
+        return returnValues;
+    }
 }
