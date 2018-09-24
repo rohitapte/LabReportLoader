@@ -120,12 +120,18 @@ public class PDFExtractor {
             PdfDocument pdfDoc=new PdfDocument(new PdfReader(pdfFile)); 
             Rectangle rect = new Rectangle(300,680,80,10); 
             TextRegionEventFilter regionFilter = new TextRegionEventFilter(rect); 
-            ITextExtractionStrategy strategy = new FilteredTextEventListener(new LocationTextExtractionStrategy(), regionFilter); 
-            String value = PdfTextExtractor.getTextFromPage(pdfDoc.getPage(2), strategy).trim();
-            if(value.length()>0)
-                value=value.replace("Patient: ","");
+            ITextExtractionStrategy strategy = new FilteredTextEventListener(new LocationTextExtractionStrategy(), regionFilter);
+            returnValues.put("Name_ReportDetails","");
+            returnValues.put("DateOfCollection_ReportDetails","");
+            String value="";
+            //String value = PdfTextExtractor.getTextFromPage(pdfDoc.getPage(2), strategy).trim();
+            //if(value.length()>0)
+            //    value=value.replace("Patient: ","");
+            //returnValues.put("Name_ReportDetails",value);
             //System.out.println(value);
-            returnValues.put("Name_ReportDetails",value); 
+            String[] values = PdfTextExtractor.getTextFromPage(pdfDoc.getPage(1)).split("\n");
+            if(values.length>5)
+                   returnValues.put("Name_ReportDetails",values[5].trim());
             rect = new Rectangle(300,660,80,10); 
             regionFilter = new TextRegionEventFilter(rect); 
             strategy = new FilteredTextEventListener(new LocationTextExtractionStrategy(), regionFilter); 
@@ -139,7 +145,7 @@ public class PDFExtractor {
             //returnValues.put("DateOfCollection_ReportDetails",value);  
             for(int page=2;page<=5;page++){ 
                 for(float y=700;y>=40;y-=10){ 
-                    rect = new Rectangle(35,y,100,10); 
+                    rect = new Rectangle(35,y,120,10); 
                     regionFilter = new TextRegionEventFilter(rect); 
                     strategy = new FilteredTextEventListener(new LocationTextExtractionStrategy(), regionFilter); 
                     String field = PdfTextExtractor.getTextFromPage(pdfDoc.getPage(page), strategy).trim(); 
@@ -163,7 +169,8 @@ public class PDFExtractor {
                                 //do nothing
                                 //System.out.println(field+"\t"+value+"\t"+range);
                             }
-                            returnValues.put(field+"_Measurement",value);
+                            if(!field.contains("The assays were developed"))
+                                returnValues.put(field+"_Measurement",value);
                         }
                     }
                 }

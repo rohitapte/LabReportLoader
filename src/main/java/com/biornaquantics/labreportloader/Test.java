@@ -41,12 +41,12 @@ public class Test {
             //Map<String,String> lab_to_internal_mappings=BQJSONParser.parseLabToInternalMappingJSON("D:\\BiornaQuantics\\lab_to_internal_mapping_IgG4.json");
             //String sFileWithPath="D:\\BiornaQuantics\\Food Sensitivities IgG4\\FoodS_Abi Tyrrell_2016.06.02.pdf";
             //String sFileWithPath="D:\\BiornaQuantics\\Food Sensitivities IgG4\\FoodS_Abi Tyrrell_2016.06.02.pdf";
-            Map<String,String> sTemp;
+            Map<String,String> sTempMap;
             //File folder = new File("D:\\BiornaQuantics\\GI-MAP\\");
-            File folder = new File("C:\\Users\\tihor\\Documents\\BiornaQuantics\\GI-MAP\\");
+            File folder = new File("d:\\BiornaQuantics\\GI-MAP\\");
             File[] listOfFiles = folder.listFiles();
             for(int i=0;i<listOfFiles.length;i++){ 
-                if(i<2) 
+                if(i<4) 
                     continue;
                 //String sZZZ=listOfFiles[i].getAbsolutePath();
                 
@@ -55,12 +55,12 @@ public class Test {
                 //    sZZZ=PDFExtractor.ExtractPageText(sZZZ,2);
                 //    System.out.println(sZZZ);
                 //}
-                sTemp=ExtractGIMAPData(listOfFiles[i].getAbsolutePath()); 
-                
-                for(String key:sTemp.keySet()) 
-                    System.out.println(key+":"+sTemp.get(key)); 
+                //sTempMap=ExtractGIMAPData(listOfFiles[i].getAbsolutePath()); 
+                System.out.println(PDFExtractor.ExtractPageText(listOfFiles[i].getAbsolutePath(),1));
+                //for(String key:sTempMap.keySet()) 
+                //    System.out.println(key+":"+sTempMap.get(key)); 
                 //if(i>5) 
-                    break; 
+                    //break; 
             } 
         }catch(IOException e){ 
             e.printStackTrace(); 
