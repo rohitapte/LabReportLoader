@@ -90,7 +90,7 @@ public class PDFExtractor {
                     rect = new Rectangle(250,y,60,10);
                     regionFilter = new TextRegionEventFilter(rect);
                     strategy = new FilteredTextEventListener(new LocationTextExtractionStrategy(), regionFilter);
-                    String field = PdfTextExtractor.getTextFromPage(pdfDoc.getPage(page), strategy).trim();
+                    String field = PdfTextExtractor.getTextFromPage(pdfDoc.getPage(page), strategy).trim().replace("_","");
                     value=value.replaceAll("[^0-9.]", "");
                     if(field.length()>0 && value.length()>0){
                         if(value.contains("\n")){
@@ -148,7 +148,7 @@ public class PDFExtractor {
                     rect = new Rectangle(35,y,120,10); 
                     regionFilter = new TextRegionEventFilter(rect); 
                     strategy = new FilteredTextEventListener(new LocationTextExtractionStrategy(), regionFilter); 
-                    String field = PdfTextExtractor.getTextFromPage(pdfDoc.getPage(page), strategy).trim(); 
+                    String field = PdfTextExtractor.getTextFromPage(pdfDoc.getPage(page), strategy).trim().replace("_",""); 
                     rect = new Rectangle(250,y,60,10); 
                     regionFilter = new TextRegionEventFilter(rect); 
                     strategy = new FilteredTextEventListener(new LocationTextExtractionStrategy(), regionFilter); 

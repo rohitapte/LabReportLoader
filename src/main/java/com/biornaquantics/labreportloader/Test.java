@@ -37,13 +37,16 @@ import org.json.JSONObject;
 public class Test { 
     public static void main(String[] args){ 
         try{ 
-            //List<JSONObject> pdf_location_mappings = BQJSONParser.parseJSONFile("D:\\BiornaQuantics\\pdf_mapping_IgG4.json");
-            //Map<String,String> lab_to_internal_mappings=BQJSONParser.parseLabToInternalMappingJSON("D:\\BiornaQuantics\\lab_to_internal_mapping_IgG4.json");
-            //String sFileWithPath="D:\\BiornaQuantics\\Food Sensitivities IgG4\\FoodS_Abi Tyrrell_2016.06.02.pdf";
+            List<JSONObject> pdf_location_mappings = BQJSONParser.parseJSONFile("D:\\BiornaQuantics\\pdf_mapping_CMEP.json");
+            Map<String,String> lab_to_internal_mappings=BQJSONParser.parseLabToInternalMappingJSON("D:\\BiornaQuantics\\lab_to_internal_mapping_CMEP.json");
+            String sFileWithPath="c:\\Users\\tihor\\Downloads\\CMEP_Lauren James_2018.09.07_Ariel Conant.pdf";
             //String sFileWithPath="D:\\BiornaQuantics\\Food Sensitivities IgG4\\FoodS_Abi Tyrrell_2016.06.02.pdf";
             Map<String,String> sTempMap;
+            sTempMap=PDFExtractor.ExtractCMEPPDFData(sFileWithPath,pdf_location_mappings);
+            for(String sKey:sTempMap.keySet())
+                System.out.println(sKey+":"+sTempMap.get(sKey));
             //File folder = new File("D:\\BiornaQuantics\\GI-MAP\\");
-            File folder = new File("d:\\BiornaQuantics\\GI-MAP\\");
+            /*File folder = new File("d:\\BiornaQuantics\\GI-MAP\\");
             File[] listOfFiles = folder.listFiles();
             for(int i=0;i<listOfFiles.length;i++){ 
                 if(i<4) 
@@ -61,7 +64,7 @@ public class Test {
                 //    System.out.println(key+":"+sTempMap.get(key)); 
                 //if(i>5) 
                     //break; 
-            } 
+            } */
         }catch(IOException e){ 
             e.printStackTrace(); 
         } 
