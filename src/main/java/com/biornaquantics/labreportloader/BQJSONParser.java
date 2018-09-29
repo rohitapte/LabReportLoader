@@ -26,11 +26,13 @@ public class BQJSONParser {
     public static List<JSONObject> parseJSONFile(String filename) throws IOException{
         List<String> list=new ArrayList<>();
         List<JSONObject> returnArray=new ArrayList<>();
-        Stream<String> stream= Files.lines(Paths.get(filename));
-        list=stream.collect(Collectors.toList());
-        for (String item : list) {
-            JSONObject jo=new JSONObject(item);
-            returnArray.add(jo);
+        if(filename.length()>0){
+            Stream<String> stream= Files.lines(Paths.get(filename));
+            list=stream.collect(Collectors.toList());
+            for (String item : list) {
+                JSONObject jo=new JSONObject(item);
+                returnArray.add(jo);
+            }
         }
         return returnArray;
     }
@@ -42,6 +44,18 @@ public class BQJSONParser {
         for (String item : list) {
             JSONObject jo=new JSONObject(item);
             returnMap.put(jo.get("LabName").toString(), jo.get("InternalName").toString());
+        }
+        return returnMap;
+    }
+    public static Map<String,String> parseLabToInternalMappingJSON(String filename,String labReport) throws IOException{
+        List<String> list=new ArrayList<>();
+        Map<String,String> returnMap=new HashMap<>();
+        Stream<String> stream= Files.lines(Paths.get(filename));
+        list=stream.collect(Collectors.toList());
+        for (String item : list) {
+            JSONObject jo=new JSONObject(item);
+            if(jo.get("LabReport").toString().equals(labReport))
+                returnMap.put(jo.get("LabName").toString(), jo.get("InternalName").toString());
         }
         return returnMap;
     }
