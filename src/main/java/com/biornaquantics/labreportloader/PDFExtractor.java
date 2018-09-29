@@ -82,7 +82,7 @@ public class PDFExtractor {
             value=value.replace(" ","").replace("Collected:","").replace("Received:","");
             returnValues.put("DateOfCollection_ReportDetails",value);            
             for(int page=1;page<=2;page++){
-                for(float y=610;y>=40;y--){
+                for(float y=610;y>=40;y-=5){
                     rect = new Rectangle(35,y,30,10);
                     regionFilter = new TextRegionEventFilter(rect);
                     strategy = new FilteredTextEventListener(new LocationTextExtractionStrategy(), regionFilter);
