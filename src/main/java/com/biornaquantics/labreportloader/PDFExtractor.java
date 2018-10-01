@@ -82,6 +82,7 @@ public class PDFExtractor {
             value=value.replace(" ","").replace("Collected:","").replace("Received:","");
             returnValues.put("DateOfCollection_ReportDetails",value);            
             for(int page=1;page<=2;page++){
+                value = PdfTextExtractor.getTextFromPage(pdfDoc.getPage(page));
                 for(float y=610;y>=40;y-=5){
                     rect = new Rectangle(35,y,30,10);
                     regionFilter = new TextRegionEventFilter(rect);
@@ -124,11 +125,6 @@ public class PDFExtractor {
             returnValues.put("Name_ReportDetails","");
             returnValues.put("DateOfCollection_ReportDetails","");
             String value="";
-            //String value = PdfTextExtractor.getTextFromPage(pdfDoc.getPage(2), strategy).trim();
-            //if(value.length()>0)
-            //    value=value.replace("Patient: ","");
-            //returnValues.put("Name_ReportDetails",value);
-            //System.out.println(value);
             String[] values = PdfTextExtractor.getTextFromPage(pdfDoc.getPage(1)).split("\n");
             if(values.length>5)
                    returnValues.put("Name_ReportDetails",values[5].trim());
@@ -139,38 +135,37 @@ public class PDFExtractor {
             value=value.split("\n")[0]; 
             value=value.replace(" ","").replace("Collected:","").replace("Received:",""); 
             returnValues.put("DateOfCollection_ReportDetails",value);
-            //System.out.println(value);
-            //value=value.split("\n")[0]; 
-            //value=value.replace(" ","").replace("Collected:","").replace("Received:",""); 
-            //returnValues.put("DateOfCollection_ReportDetails",value);  
-            for(int page=2;page<=5;page++){ 
-                for(float y=700;y>=40;y-=10){ 
-                    rect = new Rectangle(35,y,120,10); 
-                    regionFilter = new TextRegionEventFilter(rect); 
-                    strategy = new FilteredTextEventListener(new LocationTextExtractionStrategy(), regionFilter); 
-                    String field = PdfTextExtractor.getTextFromPage(pdfDoc.getPage(page), strategy).trim().replace("_",""); 
-                    rect = new Rectangle(250,y,60,10); 
-                    regionFilter = new TextRegionEventFilter(rect); 
-                    strategy = new FilteredTextEventListener(new LocationTextExtractionStrategy(), regionFilter); 
-                    value = PdfTextExtractor.getTextFromPage(pdfDoc.getPage(page), strategy).trim();
-                    rect = new Rectangle(464,y,60,10); 
-                    regionFilter = new TextRegionEventFilter(rect); 
-                    strategy = new FilteredTextEventListener(new LocationTextExtractionStrategy(), regionFilter); 
-                    String range = PdfTextExtractor.getTextFromPage(pdfDoc.getPage(page), strategy).trim();
-                    if(field.length()>0 && value.length()>0 ){
-                        if(!value.contains("Result")){
-                            //System.out.println(field+"\t"+value+"\t"+range);
-                            value=value.replace("<dl","0");
-                            value=value.replace("N/A","Negative");
-                            try{
-                                double dTemp=Double.parseDouble(value);
-                                value=""+dTemp;
-                            }catch(NumberFormatException e){
-                                //do nothing
+            for(int page=2;page<=pdfDoc.getNumberOfPages();page++){ 
+                value=PdfTextExtractor.getTextFromPage(pdfDoc.getPage(page));
+                if(value.contains("Patient:")){
+                    for(float y=700;y>=40;y-=10){ 
+                        rect = new Rectangle(35,y,120,10); 
+                        regionFilter = new TextRegionEventFilter(rect); 
+                        strategy = new FilteredTextEventListener(new LocationTextExtractionStrategy(), regionFilter); 
+                        String field = PdfTextExtractor.getTextFromPage(pdfDoc.getPage(page), strategy).trim().replace("_",""); 
+                        rect = new Rectangle(250,y,60,10); 
+                        regionFilter = new TextRegionEventFilter(rect); 
+                        strategy = new FilteredTextEventListener(new LocationTextExtractionStrategy(), regionFilter); 
+                        value = PdfTextExtractor.getTextFromPage(pdfDoc.getPage(page), strategy).trim();
+                        rect = new Rectangle(464,y,60,10); 
+                        regionFilter = new TextRegionEventFilter(rect); 
+                        strategy = new FilteredTextEventListener(new LocationTextExtractionStrategy(), regionFilter); 
+                        String range = PdfTextExtractor.getTextFromPage(pdfDoc.getPage(page), strategy).trim();
+                        if(field.length()>0 && value.length()>0 ){
+                            if(!value.contains("Result")){
                                 //System.out.println(field+"\t"+value+"\t"+range);
+                                value=value.replace("<dl","0");
+                                value=value.replace("N/A","Negative");
+                                try{
+                                    double dTemp=Double.parseDouble(value);
+                                    value=""+dTemp;
+                                }catch(NumberFormatException e){
+                                    //do nothing
+                                    //System.out.println(field+"\t"+value+"\t"+range);
+                                }
+                                if(!field.contains("The assays were developed"))
+                                    returnValues.put(field+"_Measurement",value);
                             }
-                            if(!field.contains("The assays were developed"))
-                                returnValues.put(field+"_Measurement",value);
                         }
                     }
                 }

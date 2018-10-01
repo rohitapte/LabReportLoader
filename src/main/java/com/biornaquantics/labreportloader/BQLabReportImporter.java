@@ -67,6 +67,7 @@ public class BQLabReportImporter extends javax.swing.JFrame {
     Map<String,String> lab_to_internal_mappings;
     BufferedImage originalImage=null;
     TableRowSorter<TableModel> sorter=null;
+    RestAPIURLs restAPIURLs;
 
     /**
      * Creates new form BQLabReportImporter
@@ -85,7 +86,7 @@ public class BQLabReportImporter extends javax.swing.JFrame {
             sPDFToInternal=prop.getProperty("pdf_to_internal");
             sBQEmail=prop.getProperty("BQEmail");
             sBQPassword=prop.getProperty("BQPassword");
-            
+            RestAPIURLs restAPIURLs=new RestAPIURLs();
         }catch(IOException e){
             String message="Error loading properties file.\n"+e.toString();
             System.out.println(message);
@@ -1119,7 +1120,8 @@ public class BQLabReportImporter extends javax.swing.JFrame {
                 headers.put("origin","https://lab.biorna-quantics.com");
                 headers.put("authorization","Bearer "+sToken);
                 jTextAreaUploadStatus.append("Creating panel using "+payload.toString()+"\n");
-                JSONObject returnObject=RESTAPIFunctions.http_post("https://staging-api.biorna-quantics.com/api/v1/panels", headers, payload);
+                //JSONObject returnObject=RESTAPIFunctions.http_post("https://staging-api.biorna-quantics.com/api/v1/panels", headers, payload);
+                JSONObject returnObject=RESTAPIFunctions.http_post(restAPIURLs.new_panel_creation, headers, payload);
                 String panel_id="";
                 if(returnObject.length()>0){
                         panel_id=returnObject.get("id").toString();
@@ -1143,9 +1145,10 @@ public class BQLabReportImporter extends javax.swing.JFrame {
                         whereMap.put("panelId",panel_id);
                         whereMap.put("status","pending");
                         parameters.put("where",whereMap);
-                        returnObject=RESTAPIFunctions.http_post("https://staging-api.biorna-quantics.com/api/v1/import", headers, parameters);
+                        //returnObject=RESTAPIFunctions.http_post("https://staging-api.biorna-quantics.com/api/v1/import", headers, parameters);
+                        returnObject=RESTAPIFunctions.http_post(restAPIURLs.add_measurements_to_panel, headers, parameters);
                         if(returnObject.length()>0){
-                            jTextAreaUploadStatus.append("Uploaded measurements to panel page.\n");
+                            jTextAreaUploadStatus.append("Uploaded " + measurementsList.size() + " measurements to panel page.\n");
                         }else{
                             jTextAreaUploadStatus.append("Failed to upload measurements to panel page.\n");
                         }
@@ -1318,7 +1321,8 @@ public class BQLabReportImporter extends javax.swing.JFrame {
             headers.put("Accept", "application/json");
             headers.put("Content-type", "application/json");
             headers.put("origin","https://lab.biorna-quantics.com");
-            JSONObject returnObject=RESTAPIFunctions.http_post("https://staging-api.biorna-quantics.com/api/v1/auth", headers, payload);
+            //JSONObject returnObject=RESTAPIFunctions.http_post("https://staging-api.biorna-quantics.com/api/v1/auth", headers, payload);
+            JSONObject returnObject=RESTAPIFunctions.http_post(restAPIURLs.login_token, headers, payload);
             if(returnObject.length()>0)
                 sToken=returnObject.get("token").toString();
             else
@@ -1340,7 +1344,8 @@ public class BQLabReportImporter extends javax.swing.JFrame {
             headers.put("Content-type", "application/json");
             headers.put("origin","https://lab.biorna-quantics.com");
             headers.put("authorization","Bearer "+sToken);
-            JSONObject returnValue=RESTAPIFunctions.http_get("https://staging-api.biorna-quantics.com/api/v1/list/keys?sort=title%20asc&skip=0&populate=subgroups,criticalities&select=slug",headers);
+            //JSONObject returnValue=RESTAPIFunctions.http_get("https://staging-api.biorna-quantics.com/api/v1/list/keys?sort=title%20asc&skip=0&populate=subgroups,criticalities&select=slug",headers);
+            JSONObject returnValue=RESTAPIFunctions.http_get(restAPIURLs.internal_marker_keys,headers);
             if(returnValue.length()>0){
                 internalMarkers=new ArrayList<>();
                 JSONArray jsonArray=returnValue.getJSONArray("items");
@@ -1370,7 +1375,8 @@ public class BQLabReportImporter extends javax.swing.JFrame {
             headers.put("Content-type", "application/json");
             
             headers.put("authorization","Bearer "+sToken);
-            JSONObject returnValue=RESTAPIFunctions.http_get("https://staging-api.biorna-quantics.com/api/v1/list/users?sort=firstName%20ASC&skip=NaN&select=firstName,lastName,email",headers);
+            //JSONObject returnValue=RESTAPIFunctions.http_get("https://staging-api.biorna-quantics.com/api/v1/list/users?sort=firstName%20ASC&skip=NaN&select=firstName,lastName,email",headers);
+            JSONObject returnValue=RESTAPIFunctions.http_get(restAPIURLs.user_details,headers);
             if(returnValue.length()>0){
                 userNames=new ArrayList<>();
                 username_to_id_map=new HashMap<String,String>();
