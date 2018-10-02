@@ -17,6 +17,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
@@ -835,6 +838,7 @@ public class BQLabReportImporter extends javax.swing.JFrame {
 
     private void jButtonToCSVActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonToCSVActionPerformed
         // TODO add your handling code here:
+        updateInternalMappings();
         if(sCurrentReport.length()>0 && jTablePDF.getRowCount()>0){
             JFileChooser fileChooser=new JFileChooser();
             int returnVal = fileChooser.showSaveDialog(new JFrame());
@@ -1076,6 +1080,7 @@ public class BQLabReportImporter extends javax.swing.JFrame {
 
     private void jButtonUploadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonUploadActionPerformed
         // TODO add your handling code here:
+        updateInternalMappings();
         if(sCurrentReport.length()>0 && jTablePDF.getRowCount()>0){
             populate_usernames();
             ((Java2sAutoComboBox)jComboBoxUploadUser).setDataList(userNames);
@@ -1499,6 +1504,38 @@ public class BQLabReportImporter extends javax.swing.JFrame {
             String message="Error occured while parsing pdf file.\n"+e.toString();
             System.out.println(message);
             JOptionPane.showMessageDialog(new JFrame(), message, "Dialog",JOptionPane.ERROR_MESSAGE);
+        }
+    }
+    
+    private void updateInternalMappings(){
+        Map<String,String> unfound_items=new HashMap<>();
+        String sUnfound="";
+        for(int i=0;i<jTablePDF.getRowCount();i++){
+            String sLabMarker=jTablePDF.getValueAt(i,0).toString().trim();
+            String sInternalMarker=jTablePDF.getValueAt(i,2).toString().trim();
+            if(!lab_to_internal_mappings.containsKey(sLabMarker)){
+                unfound_items.put(sLabMarker,sInternalMarker);
+                sUnfound+=sLabMarker+":"+sInternalMarker+"\n";
+            }            
+        }
+        if(unfound_items.size()>0){
+            String sMessage="The following items are not in the internal mapping table.\n\n"+sUnfound+"\nDo you want to add them?";
+            int dialogResult=JOptionPane.showConfirmDialog(new JFrame(), sMessage, "Dialog",JOptionPane.OK_CANCEL_OPTION);
+            if(dialogResult==JOptionPane.OK_OPTION){
+                String sOutput="";
+                for(String key:unfound_items.keySet())
+                    sOutput+="{\"LabReport\":\""+sCurrentReport+"\",\"LabName\":\""+key+"\",\"InternalName\":\""+unfound_items.get(key).toString()+"\"}"+System.lineSeparator();
+                try{
+                    Files.write(
+                        Paths.get(sPDFToInternal), 
+                        sOutput.getBytes(), 
+                        StandardOpenOption.APPEND);
+                }catch(IOException e){
+                    String message="IOException occured while saving mapping file.\n"+e.toString();
+                    System.out.println(message);
+                    JOptionPane.showMessageDialog(new JFrame(), message, "Dialog",JOptionPane.ERROR_MESSAGE);
+                }
+            }
         }
     }
     
