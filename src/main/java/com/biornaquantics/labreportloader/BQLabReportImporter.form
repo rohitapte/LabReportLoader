@@ -10,7 +10,7 @@
 
       <Layout class="org.netbeans.modules.form.compat2.layouts.DesignGridLayout">
         <Property name="columns" type="int" value="2"/>
-        <Property name="rows" type="int" value="8"/>
+        <Property name="rows" type="int" value="9"/>
       </Layout>
       <SubComponents>
         <Component class="javax.swing.JLabel" name="jLabelBQEmail">
@@ -29,6 +29,38 @@
         </Component>
         <Component class="javax.swing.JPasswordField" name="jPasswordFieldBQPassword">
         </Component>
+        <Component class="javax.swing.JLabel" name="jLabelAutoDetectDirectory">
+          <Properties>
+            <Property name="horizontalAlignment" type="int" value="4"/>
+            <Property name="text" type="java.lang.String" value="Auto Detect:"/>
+          </Properties>
+        </Component>
+        <Container class="javax.swing.JPanel" name="jPanelAutoDetectDirectory">
+
+          <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout"/>
+          <SubComponents>
+            <Component class="javax.swing.JTextField" name="jTextFieldAutoDetectDirectory">
+              <Constraints>
+                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout" value="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout$BorderConstraintsDescription">
+                  <BorderConstraints direction="Center"/>
+                </Constraint>
+              </Constraints>
+            </Component>
+            <Component class="javax.swing.JButton" name="jButtonAutoDetectDirectory">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="..."/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButtonAutoDetectDirectoryActionPerformed"/>
+              </Events>
+              <Constraints>
+                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout" value="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout$BorderConstraintsDescription">
+                  <BorderConstraints direction="East"/>
+                </Constraint>
+              </Constraints>
+            </Component>
+          </SubComponents>
+        </Container>
         <Component class="javax.swing.JLabel" name="jLabelCMEPDirectory">
           <Properties>
             <Property name="horizontalAlignment" type="int" value="4"/>
@@ -522,6 +554,11 @@
         </Container>
       </SubComponents>
     </Container>
+    <Component class="javax.swing.JMenuItem" name="jMenuItem1">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="jMenuItem1"/>
+      </Properties>
+    </Component>
     <Menu class="javax.swing.JMenuBar" name="jMenuBarMainMenu">
       <SubComponents>
         <Menu class="javax.swing.JMenu" name="jMenuFile">
@@ -567,6 +604,14 @@
             <Property name="text" type="java.lang.String" value="Lab Reports"/>
           </Properties>
           <SubComponents>
+            <MenuItem class="javax.swing.JMenuItem" name="jMenuItemAutoDetect">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Auto Detect"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jMenuItemAutoDetectActionPerformed"/>
+              </Events>
+            </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="jMenuItemCMEP">
               <Properties>
                 <Property name="text" type="java.lang.String" value="CMEP"/>
@@ -843,6 +888,17 @@
 
       <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBoxLayout"/>
       <SubComponents>
+        <Component class="javax.swing.JButton" name="jButtonAutoDetect">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Auto Detect"/>
+            <Property name="focusable" type="boolean" value="false"/>
+            <Property name="horizontalTextPosition" type="int" value="0"/>
+            <Property name="verticalTextPosition" type="int" value="3"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButtonAutoDetectActionPerformed"/>
+          </Events>
+        </Component>
         <Component class="javax.swing.JButton" name="jButtonCMEP">
           <Properties>
             <Property name="text" type="java.lang.String" value="CMEP"/>

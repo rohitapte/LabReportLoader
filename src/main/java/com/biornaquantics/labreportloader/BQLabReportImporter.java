@@ -63,7 +63,7 @@ public class BQLabReportImporter extends javax.swing.JFrame {
     PDDocument document=null;
     PDFRenderer renderer=null;
     private float RENDER_DPI=200;
-    String sCMEPLocation="",sIgG4Location="",sGIMAPLocation="",sCMEPToPDFLocation="",sBQEmail="",sBQPassword="",sPDFToInternal="";
+    String sAutoDetectLocation="",sCMEPLocation="",sIgG4Location="",sGIMAPLocation="",sCMEPToPDFLocation="",sBQEmail="",sBQPassword="",sPDFToInternal="";
     Java2sAutoComboBox editInternalSlugBox,editLabReportBox;
     String sCurrentReport="";
     List<JSONObject> pdf_location_mappings;
@@ -82,6 +82,7 @@ public class BQLabReportImporter extends javax.swing.JFrame {
         try{
             input=new FileInputStream(System.getProperty("user.dir")+"/config.properties");
             prop.load(input);
+            sAutoDetectLocation=prop.getProperty("AutoDetectLocation");
             sCMEPLocation=prop.getProperty("CMEPLocation");
             sCMEPToPDFLocation=prop.getProperty("CMEP_PDF_location");
             sIgG4Location=prop.getProperty("IgG4Location");
@@ -133,6 +134,10 @@ public class BQLabReportImporter extends javax.swing.JFrame {
         jTextFieldBQEmail = new javax.swing.JTextField();
         jLabelBQPassword = new javax.swing.JLabel();
         jPasswordFieldBQPassword = new javax.swing.JPasswordField();
+        jLabelAutoDetectDirectory = new javax.swing.JLabel();
+        jPanelAutoDetectDirectory = new javax.swing.JPanel();
+        jTextFieldAutoDetectDirectory = new javax.swing.JTextField();
+        jButtonAutoDetectDirectory = new javax.swing.JButton();
         jLabelCMEPDirectory = new javax.swing.JLabel();
         jPanelCMEPDirectory = new javax.swing.JPanel();
         jTextFieldCMEPDirectory = new javax.swing.JTextField();
@@ -189,6 +194,7 @@ public class BQLabReportImporter extends javax.swing.JFrame {
         jPanelUploadStatus = new javax.swing.JPanel();
         jScrollPaneUploadStatus = new javax.swing.JScrollPane();
         jTextAreaUploadStatus = new javax.swing.JTextArea();
+        jMenuItem1 = new javax.swing.JMenuItem();
         jPanelMain = new javax.swing.JPanel();
         jPanelPDF = new javax.swing.JPanel();
         jToolBarRecordParser = new javax.swing.JToolBar();
@@ -209,6 +215,7 @@ public class BQLabReportImporter extends javax.swing.JFrame {
         jScrollPanePDF = new javax.swing.JScrollPane();
         jTablePDF = new javax.swing.JTable();
         jToolBarLoaderButtons = new javax.swing.JToolBar();
+        jButtonAutoDetect = new javax.swing.JButton();
         jButtonCMEP = new javax.swing.JButton();
         jButtonIgG4 = new javax.swing.JButton();
         jButtonGIMAP = new javax.swing.JButton();
@@ -221,13 +228,14 @@ public class BQLabReportImporter extends javax.swing.JFrame {
         jMenuItemSettings = new javax.swing.JMenuItem();
         jMenuItemMappings = new javax.swing.JMenuItem();
         jMenuLabReports = new javax.swing.JMenu();
+        jMenuItemAutoDetect = new javax.swing.JMenuItem();
         jMenuItemCMEP = new javax.swing.JMenuItem();
         jMenuItemIgG4 = new javax.swing.JMenuItem();
         jMenuItemGIMAP = new javax.swing.JMenuItem();
 
         jDialogSettings.setTitle("Settings");
         jDialogSettings.setModal(true);
-        jDialogSettings.getContentPane().setLayout(new java.awt.GridLayout(8, 2));
+        jDialogSettings.getContentPane().setLayout(new java.awt.GridLayout(9, 2));
 
         jLabelBQEmail.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabelBQEmail.setText("BQ Email:");
@@ -238,6 +246,23 @@ public class BQLabReportImporter extends javax.swing.JFrame {
         jLabelBQPassword.setText("BQ Password:");
         jDialogSettings.getContentPane().add(jLabelBQPassword);
         jDialogSettings.getContentPane().add(jPasswordFieldBQPassword);
+
+        jLabelAutoDetectDirectory.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        jLabelAutoDetectDirectory.setText("Auto Detect:");
+        jDialogSettings.getContentPane().add(jLabelAutoDetectDirectory);
+
+        jPanelAutoDetectDirectory.setLayout(new java.awt.BorderLayout());
+        jPanelAutoDetectDirectory.add(jTextFieldAutoDetectDirectory, java.awt.BorderLayout.CENTER);
+
+        jButtonAutoDetectDirectory.setText("...");
+        jButtonAutoDetectDirectory.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonAutoDetectDirectoryActionPerformed(evt);
+            }
+        });
+        jPanelAutoDetectDirectory.add(jButtonAutoDetectDirectory, java.awt.BorderLayout.EAST);
+
+        jDialogSettings.getContentPane().add(jPanelAutoDetectDirectory);
 
         jLabelCMEPDirectory.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabelCMEPDirectory.setText("CMEP Directory:");
@@ -514,6 +539,8 @@ public class BQLabReportImporter extends javax.swing.JFrame {
 
         jDialogUpload.getContentPane().add(jPanelUploadStatus, java.awt.BorderLayout.SOUTH);
 
+        jMenuItem1.setText("jMenuItem1");
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         addComponentListener(new java.awt.event.ComponentAdapter() {
             public void componentResized(java.awt.event.ComponentEvent evt) {
@@ -659,6 +686,17 @@ public class BQLabReportImporter extends javax.swing.JFrame {
 
         jToolBarLoaderButtons.setRollover(true);
 
+        jButtonAutoDetect.setText("Auto Detect");
+        jButtonAutoDetect.setFocusable(false);
+        jButtonAutoDetect.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jButtonAutoDetect.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jButtonAutoDetect.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonAutoDetectActionPerformed(evt);
+            }
+        });
+        jToolBarLoaderButtons.add(jButtonAutoDetect);
+
         jButtonCMEP.setText("CMEP");
         jButtonCMEP.setFocusable(false);
         jButtonCMEP.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -735,6 +773,14 @@ public class BQLabReportImporter extends javax.swing.JFrame {
 
         jMenuLabReports.setText("Lab Reports");
 
+        jMenuItemAutoDetect.setText("Auto Detect");
+        jMenuItemAutoDetect.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItemAutoDetectActionPerformed(evt);
+            }
+        });
+        jMenuLabReports.add(jMenuItemAutoDetect);
+
         jMenuItemCMEP.setText("CMEP");
         jMenuItemCMEP.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -768,12 +814,16 @@ public class BQLabReportImporter extends javax.swing.JFrame {
 
     private void jButtonCMEPActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCMEPActionPerformed
         // TODO add your handling code here:
-        loadCMEPReport();
+        String sFileWithPath=displayFileDialog(sCMEPLocation);
+        if(sFileWithPath.length()>0)
+            loadCMEPReport(sFileWithPath);
     }//GEN-LAST:event_jButtonCMEPActionPerformed
 
     private void jButtonIgG4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonIgG4ActionPerformed
         // TODO add your handling code here:
-        loadIgG4Report();
+        String sFileWithPath=displayFileDialog(sIgG4Location);
+        if(sFileWithPath.length()>0)
+            loadIgG4Report(sFileWithPath);
     }//GEN-LAST:event_jButtonIgG4ActionPerformed
 
     private void jButtonFirstActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonFirstActionPerformed
@@ -828,12 +878,16 @@ public class BQLabReportImporter extends javax.swing.JFrame {
 
     private void jMenuItemCMEPActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemCMEPActionPerformed
         // TODO add your handling code here:
-        loadCMEPReport();
+        String sFileWithPath=displayFileDialog(sCMEPLocation);
+        if(sFileWithPath.length()>0)
+            loadCMEPReport(sFileWithPath);
     }//GEN-LAST:event_jMenuItemCMEPActionPerformed
 
     private void jMenuItemIgG4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemIgG4ActionPerformed
         // TODO add your handling code here:
-        loadIgG4Report();
+        String sFileWithPath=displayFileDialog(sIgG4Location);
+        if(sFileWithPath.length()>0)
+            loadIgG4Report(sFileWithPath);
     }//GEN-LAST:event_jMenuItemIgG4ActionPerformed
 
     private void jButtonToCSVActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonToCSVActionPerformed
@@ -888,6 +942,7 @@ public class BQLabReportImporter extends javax.swing.JFrame {
 
     private void jMenuItemSettingsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemSettingsActionPerformed
         // TODO add your handling code here:
+        jTextFieldAutoDetectDirectory.setText(sAutoDetectLocation);
         jTextFieldCMEPDirectory.setText(sCMEPLocation);
         jTextFieldIgG4Directory.setText(sIgG4Location);
         jTextFieldGIMAPDirectory.setText(sGIMAPLocation);
@@ -901,6 +956,7 @@ public class BQLabReportImporter extends javax.swing.JFrame {
 
     private void jButtonSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSaveActionPerformed
         // TODO add your handling code here:
+        sAutoDetectLocation=jTextFieldAutoDetectDirectory.getText();
         sCMEPLocation=jTextFieldCMEPDirectory.getText();
         sIgG4Location=jTextFieldIgG4Directory.getText();
         sGIMAPLocation=jTextFieldGIMAPDirectory.getText();
@@ -918,6 +974,7 @@ public class BQLabReportImporter extends javax.swing.JFrame {
             output = new FileOutputStream(System.getProperty("user.dir")+"/config.properties");
             
             // set the properties value
+            prop.setProperty("AutoDetectLocation",sAutoDetectLocation);
             prop.setProperty("CMEPLocation", sCMEPLocation);
             prop.setProperty("IgG4Location", sIgG4Location);
             prop.setProperty("GIMAPLocation",sGIMAPLocation);
@@ -1245,7 +1302,9 @@ public class BQLabReportImporter extends javax.swing.JFrame {
 
     private void jButtonGIMAPActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonGIMAPActionPerformed
         // TODO add your handling code here:
-        loadGIMAP();
+        String sFileWithPath=displayFileDialog(sGIMAPLocation);
+        if(sFileWithPath.length()>0)
+            loadGIMAP(sFileWithPath);
     }//GEN-LAST:event_jButtonGIMAPActionPerformed
 
     private void jButtonGIMAPDirectoryActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonGIMAPDirectoryActionPerformed
@@ -1264,7 +1323,9 @@ public class BQLabReportImporter extends javax.swing.JFrame {
 
     private void jMenuItemGIMAPActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemGIMAPActionPerformed
         // TODO add your handling code here:
-        loadGIMAP();
+        String sFileWithPath=displayFileDialog(sGIMAPLocation);
+        if(sFileWithPath.length()>0)
+            loadGIMAP(sFileWithPath);
     }//GEN-LAST:event_jMenuItemGIMAPActionPerformed
 
     private void jTableMappingPDFToInternalMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTableMappingPDFToInternalMouseClicked
@@ -1282,6 +1343,30 @@ public class BQLabReportImporter extends javax.swing.JFrame {
         else
             sorter.setRowFilter(null);
     }//GEN-LAST:event_jComboBoxPDFMappingSelectorItemStateChanged
+
+    private void jButtonAutoDetectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAutoDetectActionPerformed
+        // TODO add your handling code here:
+        loadAutoDetectFiles();
+    }//GEN-LAST:event_jButtonAutoDetectActionPerformed
+
+    private void jButtonAutoDetectDirectoryActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAutoDetectDirectoryActionPerformed
+        // TODO add your handling code here:
+        JFileChooser chooser = new JFileChooser(); 
+        chooser.setCurrentDirectory(new java.io.File(jTextFieldAutoDetectDirectory.getText()));
+        chooser.setDialogTitle("Select Directory");
+        chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        //
+        // disable the "All files" option.
+        //
+        chooser.setAcceptAllFileFilterUsed(false);
+        if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION)
+            jTextFieldAutoDetectDirectory.setText(chooser.getSelectedFile().toString());
+    }//GEN-LAST:event_jButtonAutoDetectDirectoryActionPerformed
+
+    private void jMenuItemAutoDetectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemAutoDetectActionPerformed
+        // TODO add your handling code here:
+        loadAutoDetectFiles();
+    }//GEN-LAST:event_jMenuItemAutoDetectActionPerformed
 
     /**
      * @param args the command line arguments
@@ -1406,33 +1491,25 @@ public class BQLabReportImporter extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(new JFrame(), message, "Dialog",JOptionPane.ERROR_MESSAGE);
         }
     }
-    private void loadCMEPReport(){
+    private void loadCMEPReport(String sFileWithPath){
         sCurrentReport="CMEP";
         try{
-            FileFilter pdfFilter = new FileNameExtensionFilter("PDF file", "pdf", "pdf");
-            JFileChooser pdfFileChooser=new JFileChooser();
-            pdfFileChooser.setCurrentDirectory(new File(sCMEPLocation));
-            pdfFileChooser.setFileFilter(pdfFilter);
-            int result = pdfFileChooser.showOpenDialog(new JFrame());
-            if (result == JFileChooser.APPROVE_OPTION){
-                pdf_location_mappings = BQJSONParser.parseJSONFile(sCMEPToPDFLocation);
-                lab_to_internal_mappings=BQJSONParser.parseLabToInternalMappingJSON(sPDFToInternal,"CMEP");
-                File selectedFile = pdfFileChooser.getSelectedFile();
-                sCMEPLocation=selectedFile.getParent();
-                String sFileWithPath=selectedFile.getAbsolutePath();
-                jLabelStatus.setText("Status: Parsing "+sFileWithPath);
-                String sText=PDFExtractor.ExtractPageText(sFileWithPath,1);
-                if(!(sText.contains("Metabolic") && sText.contains("Markers"))){
-                    JOptionPane.showMessageDialog(new JFrame(),"This doesnt appear to be a CMEP report. Please check the file.","Incorrect PDF format",JOptionPane.WARNING_MESSAGE);
-                }else{
-                    Map<String,String> pdfExtract= PDFExtractor.ExtractCMEPPDFData(sFileWithPath,pdf_location_mappings);
-                    displayPdf(pdfExtract,lab_to_internal_mappings);
-                    currentPage=1;
-                    document=PDDocument.load(selectedFile);
-                    renderer = new PDFRenderer(document);
-                    renderPage();
-                }
-            }
+            pdf_location_mappings = BQJSONParser.parseJSONFile(sCMEPToPDFLocation);
+            lab_to_internal_mappings=BQJSONParser.parseLabToInternalMappingJSON(sPDFToInternal,"CMEP");
+            File selectedFile = new File(sFileWithPath);
+            sCMEPLocation=selectedFile.getParent();
+            jLabelStatus.setText("Status: Parsing "+sFileWithPath);
+            String sText=PDFExtractor.ExtractPageText(sFileWithPath,1);
+            if(!(sText.contains("Metabolic") && sText.contains("Markers"))){
+                JOptionPane.showMessageDialog(new JFrame(),"This doesnt appear to be a CMEP report. Please check the file.","Incorrect PDF format",JOptionPane.WARNING_MESSAGE);
+            }else{
+                Map<String,String> pdfExtract= PDFExtractor.ExtractCMEPPDFData(sFileWithPath,pdf_location_mappings);
+                displayPdf(pdfExtract,lab_to_internal_mappings);
+                currentPage=1;
+                document=PDDocument.load(selectedFile);
+                renderer = new PDFRenderer(document);
+                renderPage();
+        }
         }catch(IOException e){
             String message="Error occured while parsing pdf file.\n"+e.toString();
             System.out.println(message);
@@ -1440,32 +1517,24 @@ public class BQLabReportImporter extends javax.swing.JFrame {
         }
     }
     
-    private void loadIgG4Report(){
+    private void loadIgG4Report(String sFileWithPath){
         sCurrentReport="IgG4";
-        try{
-            FileFilter pdfFilter = new FileNameExtensionFilter("PDF file", "pdf", "pdf");
-            JFileChooser pdfFileChooser=new JFileChooser();
-            pdfFileChooser.setCurrentDirectory(new File(sIgG4Location));
-            pdfFileChooser.setFileFilter(pdfFilter);
-            int result = pdfFileChooser.showOpenDialog(new JFrame());
-            if (result == JFileChooser.APPROVE_OPTION){
-                pdf_location_mappings = BQJSONParser.parseJSONFile("");
-                lab_to_internal_mappings=BQJSONParser.parseLabToInternalMappingJSON(sPDFToInternal,"IgG4");
-                File selectedFile = pdfFileChooser.getSelectedFile();
-                String sFileWithPath=selectedFile.getAbsolutePath();
-                sIgG4Location=selectedFile.getParent();
-                jLabelStatus.setText("Status: Parsing "+sFileWithPath);
-                String sText=PDFExtractor.ExtractPageText(sFileWithPath,1);
-                if(!(sText.contains("ALLERGEN") && sText.contains("RESULT"))){
-                    JOptionPane.showMessageDialog(new JFrame(),"This doesnt appear to be an IgG4 food sensitivity report. Please check the file.","Incorrect PDF format",JOptionPane.WARNING_MESSAGE);
-                }else{
-                    Map<String,String> pdfExtract= PDFExtractor.ExtractIgG4PDFData(sFileWithPath,pdf_location_mappings);
-                    displayPdf(pdfExtract,lab_to_internal_mappings);
-                    currentPage=1;
-                    document=PDDocument.load(selectedFile);
-                    renderer = new PDFRenderer(document);
-                    renderPage();
-                }
+        try{            
+            pdf_location_mappings = BQJSONParser.parseJSONFile("");
+            lab_to_internal_mappings=BQJSONParser.parseLabToInternalMappingJSON(sPDFToInternal,"IgG4");
+            File selectedFile = new File(sFileWithPath);
+            sIgG4Location=selectedFile.getParent();
+            jLabelStatus.setText("Status: Parsing "+sFileWithPath);
+            String sText=PDFExtractor.ExtractPageText(sFileWithPath,1);
+            if(!(sText.contains("ALLERGEN") && sText.contains("RESULT"))){
+                JOptionPane.showMessageDialog(new JFrame(),"This doesnt appear to be an IgG4 food sensitivity report. Please check the file.","Incorrect PDF format",JOptionPane.WARNING_MESSAGE);
+            }else{
+                Map<String,String> pdfExtract= PDFExtractor.ExtractIgG4PDFData(sFileWithPath,pdf_location_mappings);
+                displayPdf(pdfExtract,lab_to_internal_mappings);
+                currentPage=1;
+                document=PDDocument.load(selectedFile);
+                renderer = new PDFRenderer(document);
+                renderPage();
             }
         }catch(IOException e){
             String message="Error occured while parsing pdf file.\n"+e.toString();
@@ -1473,32 +1542,24 @@ public class BQLabReportImporter extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(new JFrame(), message, "Dialog",JOptionPane.ERROR_MESSAGE);
         }
     }
-    private void loadGIMAP(){
+    private void loadGIMAP(String sFileWithPath){
         sCurrentReport="GIMAP";
         try{
-            FileFilter pdfFilter = new FileNameExtensionFilter("PDF file", "pdf", "pdf");
-            JFileChooser pdfFileChooser=new JFileChooser();
-            pdfFileChooser.setCurrentDirectory(new File(sGIMAPLocation));
-            pdfFileChooser.setFileFilter(pdfFilter);
-            int result = pdfFileChooser.showOpenDialog(new JFrame());
-            if (result == JFileChooser.APPROVE_OPTION){
-                //pdf_location_mappings = BQJSONParser.parseJSONFile(sIgG4ToPDFLocation);   dont need this
-                lab_to_internal_mappings=BQJSONParser.parseLabToInternalMappingJSON(sPDFToInternal,"");
-                File selectedFile = pdfFileChooser.getSelectedFile();
-                String sFileWithPath=selectedFile.getAbsolutePath();
-                sGIMAPLocation=selectedFile.getParent();
-                jLabelStatus.setText("Status: Parsing "+sFileWithPath);
-                String sText=PDFExtractor.ExtractPageText(sFileWithPath,1);
-                if(!sText.contains("GI-MAP")){
-                    JOptionPane.showMessageDialog(new JFrame(),"This doesnt appear to be an IgG4 food sensitivity report. Please check the file.","Incorrect PDF format",JOptionPane.WARNING_MESSAGE);
-                }else{
-                    Map<String,String> pdfExtract= PDFExtractor.ExtractGIMAPData(sFileWithPath);
-                    displayPdf(pdfExtract,lab_to_internal_mappings);
-                    currentPage=1;
-                    document=PDDocument.load(selectedFile);
-                    renderer = new PDFRenderer(document);
-                    renderPage();
-                }
+            //pdf_location_mappings = BQJSONParser.parseJSONFile(sIgG4ToPDFLocation);   dont need this
+            lab_to_internal_mappings=BQJSONParser.parseLabToInternalMappingJSON(sPDFToInternal,"");
+            File selectedFile = new File(sFileWithPath);
+            sGIMAPLocation=selectedFile.getParent();
+            jLabelStatus.setText("Status: Parsing "+sFileWithPath);
+            String sText=PDFExtractor.ExtractPageText(sFileWithPath,1);
+            if(!sText.contains("GI-MAP")){
+                JOptionPane.showMessageDialog(new JFrame(),"This doesnt appear to be an IgG4 food sensitivity report. Please check the file.","Incorrect PDF format",JOptionPane.WARNING_MESSAGE);
+            }else{
+                Map<String,String> pdfExtract= PDFExtractor.ExtractGIMAPData(sFileWithPath);
+                displayPdf(pdfExtract,lab_to_internal_mappings);
+                currentPage=1;
+                document=PDDocument.load(selectedFile);
+                renderer = new PDFRenderer(document);
+                renderPage();
             }
         }catch(IOException e){
             String message="Error occured while parsing pdf file.\n"+e.toString();
@@ -1535,6 +1596,40 @@ public class BQLabReportImporter extends javax.swing.JFrame {
                     System.out.println(message);
                     JOptionPane.showMessageDialog(new JFrame(), message, "Dialog",JOptionPane.ERROR_MESSAGE);
                 }
+            }
+        }
+    }
+    private String displayFileDialog(String sFileLocation){
+        FileFilter pdfFilter = new FileNameExtensionFilter("PDF file", "pdf", "pdf");
+        JFileChooser pdfFileChooser=new JFileChooser();
+        pdfFileChooser.setCurrentDirectory(new File(sFileLocation));
+        pdfFileChooser.setFileFilter(pdfFilter);
+        int result = pdfFileChooser.showOpenDialog(new JFrame());
+        if (result == JFileChooser.APPROVE_OPTION){
+            File selectedFile = pdfFileChooser.getSelectedFile();
+            return selectedFile.getAbsolutePath();
+        }else
+            return "";
+    }
+    private void loadAutoDetectFiles()
+    {
+        String sFileWithPath=displayFileDialog(sAutoDetectLocation);
+        if(sFileWithPath.length()>0){
+            try{
+                File fTemp=new File(sFileWithPath);
+                sAutoDetectLocation=fTemp.getParent();
+                String sText=PDFExtractor.ExtractPageText(sFileWithPath,1);
+                if((sText.contains("Metabolic") && sText.contains("Markers"))){
+                    loadCMEPReport(sFileWithPath);
+                }else if((sText.contains("ALLERGEN") && sText.contains("RESULT"))){
+                    loadIgG4Report(sFileWithPath);
+                }else if(sText.contains("GI-MAP")){
+                    loadGIMAP(sFileWithPath);
+                }
+            }catch(IOException e){
+                String message="Error auto detecting file.\n"+e.toString();
+                System.out.println(message);
+                JOptionPane.showMessageDialog(new JFrame(), message, "Dialog",JOptionPane.ERROR_MESSAGE);
             }
         }
     }
@@ -1597,6 +1692,8 @@ public class BQLabReportImporter extends javax.swing.JFrame {
     }
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jButtonAutoDetect;
+    private javax.swing.JButton jButtonAutoDetectDirectory;
     private javax.swing.JButton jButtonCMEP;
     private javax.swing.JButton jButtonCMEPDirectory;
     private javax.swing.JButton jButtonCMEPPDFMapping;
@@ -1625,6 +1722,7 @@ public class BQLabReportImporter extends javax.swing.JFrame {
     private javax.swing.JDialog jDialogUpload;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabelAutoDetectDirectory;
     private javax.swing.JLabel jLabelBQEmail;
     private javax.swing.JLabel jLabelBQPassword;
     private javax.swing.JLabel jLabelCMEPDirectory;
@@ -1642,6 +1740,8 @@ public class BQLabReportImporter extends javax.swing.JFrame {
     private javax.swing.JMenuBar jMenuBarMainMenu;
     private javax.swing.JMenu jMenuEdit;
     private javax.swing.JMenu jMenuFile;
+    private javax.swing.JMenuItem jMenuItem1;
+    private javax.swing.JMenuItem jMenuItemAutoDetect;
     private javax.swing.JMenuItem jMenuItemCMEP;
     private javax.swing.JMenuItem jMenuItemDeleteCMEP;
     private javax.swing.JMenuItem jMenuItemDeletePDF;
@@ -1653,6 +1753,7 @@ public class BQLabReportImporter extends javax.swing.JFrame {
     private javax.swing.JMenuItem jMenuItemMappings;
     private javax.swing.JMenuItem jMenuItemSettings;
     private javax.swing.JMenu jMenuLabReports;
+    private javax.swing.JPanel jPanelAutoDetectDirectory;
     private javax.swing.JPanel jPanelButtons;
     private javax.swing.JPanel jPanelCMEPDirectory;
     private javax.swing.JPanel jPanelCMEPLabToInternalMapping;
@@ -1681,6 +1782,7 @@ public class BQLabReportImporter extends javax.swing.JFrame {
     private javax.swing.JTable jTableMappingPDFToInternal;
     private javax.swing.JTable jTablePDF;
     private javax.swing.JTextArea jTextAreaUploadStatus;
+    private javax.swing.JTextField jTextFieldAutoDetectDirectory;
     private javax.swing.JTextField jTextFieldBQEmail;
     private javax.swing.JTextField jTextFieldCMEPDirectory;
     private javax.swing.JTextField jTextFieldCMEPPDFMapping;
