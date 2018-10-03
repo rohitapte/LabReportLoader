@@ -170,6 +170,7 @@ public class PDFExtractor {
                     }
                 }
             }
+            pdfDoc.close();
         } catch (IOException e) { 
             System.out.println("Could not find file "+pdfFile); 
             throw(e); 
