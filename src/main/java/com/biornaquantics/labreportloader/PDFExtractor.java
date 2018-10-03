@@ -154,8 +154,8 @@ public class PDFExtractor {
                         if(field.length()>0 && value.length()>0 ){
                             if(!value.contains("Result")){
                                 //System.out.println(field+"\t"+value+"\t"+range);
-                                value=value.replace("<dl","0");
-                                value=value.replace("N/A","Negative");
+                                //value=value.replace("<dl","0");
+                                value=value.replace("N/A","0");
                                 try{
                                     double dTemp=Double.parseDouble(value);
                                     value=""+dTemp;
