@@ -1116,6 +1116,7 @@ public class BQLabReportImporter extends javax.swing.JFrame {
 
     private void jButtonMappingSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonMappingSaveActionPerformed
         // TODO add your handling code here:
+        sorter.setRowFilter(null);
         try{
             PrintWriter os = new PrintWriter(sPDFToInternal);
             for (int i = 0; i < jTableMappingPDFToInternal.getRowCount(); i++) {
@@ -1133,6 +1134,11 @@ public class BQLabReportImporter extends javax.swing.JFrame {
             System.out.println(message);
             JOptionPane.showMessageDialog(new JFrame(), message, "Dialog",JOptionPane.ERROR_MESSAGE);
         }
+        String selectedValue=jComboBoxPDFMappingSelector.getItemAt(jComboBoxPDFMappingSelector.getSelectedIndex()).trim();
+        if(selectedValue.length()>0)
+            sorter.setRowFilter(RowFilter.regexFilter(selectedValue));
+        else
+            sorter.setRowFilter(null);
     }//GEN-LAST:event_jButtonMappingSaveActionPerformed
 
     private void jTablePDFMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTablePDFMousePressed
