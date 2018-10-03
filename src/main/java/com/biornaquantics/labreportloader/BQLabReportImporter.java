@@ -37,6 +37,8 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.RowFilter;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
@@ -117,6 +119,25 @@ public class BQLabReportImporter extends javax.swing.JFrame {
         sorter=new TableRowSorter<TableModel>(jTableMappingPDFToInternal.getModel());
         jTableMappingPDFToInternal.setRowSorter(sorter);
         
+        if(sToken.length()>0)
+            jLabelRESTAPIStatus.setBackground(new java.awt.Color(0,142, 0));
+        else
+            jLabelRESTAPIStatus.setBackground(new java.awt.Color(255,0, 0));
+        jTablePDF.getModel().addTableModelListener(new TableModelListener() {
+            @Override
+            public void tableChanged(TableModelEvent tme) {
+                int numRows=jTablePDF.getRowCount();
+                int numUpdates=0;
+                for(int i=0;i<numRows;i++){
+                    String sLabMarker=jTablePDF.getValueAt(i,0).toString().trim();
+                    String sValue=jTablePDF.getValueAt(i,1).toString().trim();
+                    String sInternalMarker=jTablePDF.getValueAt(i,2).toString().trim();
+                    if(sLabMarker.length()>0 && sValue.length()>0 && sInternalMarker.length()>0)
+                        numUpdates++;
+                }
+                jLabelTableStatus.setText("Table: "+numRows+" Rows, "+numUpdates+" to upload");
+            }
+        });
         this.setTitle("Biorna Quantics Lab Report Importer");
     }
 
@@ -194,7 +215,6 @@ public class BQLabReportImporter extends javax.swing.JFrame {
         jPanelUploadStatus = new javax.swing.JPanel();
         jScrollPaneUploadStatus = new javax.swing.JScrollPane();
         jTextAreaUploadStatus = new javax.swing.JTextArea();
-        jMenuItem1 = new javax.swing.JMenuItem();
         jPanelMain = new javax.swing.JPanel();
         jPanelPDF = new javax.swing.JPanel();
         jToolBarRecordParser = new javax.swing.JToolBar();
@@ -221,6 +241,11 @@ public class BQLabReportImporter extends javax.swing.JFrame {
         jButtonGIMAP = new javax.swing.JButton();
         jPanelStatusbar = new javax.swing.JPanel();
         jLabelStatus = new javax.swing.JLabel();
+        jPanelStatusBarSubBar = new javax.swing.JPanel();
+        jLabelTableStatus = new javax.swing.JLabel();
+        jPanelStatusBarSubSubBar = new javax.swing.JPanel();
+        jLabelRESTAPIStatusLabel = new javax.swing.JLabel();
+        jLabelRESTAPIStatus = new javax.swing.JLabel();
         jMenuBarMainMenu = new javax.swing.JMenuBar();
         jMenuFile = new javax.swing.JMenu();
         jMenuItemExit = new javax.swing.JMenuItem();
@@ -493,11 +518,18 @@ public class BQLabReportImporter extends javax.swing.JFrame {
         jLabelUploadUser.setText("Panel User");
         jPanelUploadInputs.add(jLabelUploadUser);
 
+        jComboBoxUploadUser.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                jComboBoxUploadUserItemStateChanged(evt);
+            }
+        });
         jPanelUploadInputs.add(jComboBoxUploadUser);
 
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel2.setText("Panel");
         jPanelUploadInputs.add(jLabel2);
+
+        jTextFieldUploadPanel.setEnabled(false);
         jPanelUploadInputs.add(jTextFieldUploadPanel);
 
         jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
@@ -538,8 +570,6 @@ public class BQLabReportImporter extends javax.swing.JFrame {
         jPanelUploadStatus.add(jScrollPaneUploadStatus, java.awt.BorderLayout.CENTER);
 
         jDialogUpload.getContentPane().add(jPanelUploadStatus, java.awt.BorderLayout.SOUTH);
-
-        jMenuItem1.setText("jMenuItem1");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         addComponentListener(new java.awt.event.ComponentAdapter() {
@@ -732,10 +762,30 @@ public class BQLabReportImporter extends javax.swing.JFrame {
 
         getContentPane().add(jToolBarLoaderButtons, java.awt.BorderLayout.PAGE_START);
 
-        jPanelStatusbar.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
+        jPanelStatusbar.setLayout(new java.awt.GridLayout(1, 2));
 
         jLabelStatus.setText("Status:");
         jPanelStatusbar.add(jLabelStatus);
+
+        jPanelStatusBarSubBar.setLayout(new java.awt.GridLayout(1, 2));
+
+        jLabelTableStatus.setText("Table: 0 Rows, 0 to upload");
+        jPanelStatusBarSubBar.add(jLabelTableStatus);
+
+        jPanelStatusBarSubSubBar.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT));
+
+        jLabelRESTAPIStatusLabel.setText("REST API Status:");
+        jPanelStatusBarSubSubBar.add(jLabelRESTAPIStatusLabel);
+
+        jLabelRESTAPIStatus.setBackground(new java.awt.Color(255, 0, 0));
+        jLabelRESTAPIStatus.setForeground(new java.awt.Color(255, 255, 255));
+        jLabelRESTAPIStatus.setText("     ");
+        jLabelRESTAPIStatus.setOpaque(true);
+        jPanelStatusBarSubSubBar.add(jLabelRESTAPIStatus);
+
+        jPanelStatusBarSubBar.add(jPanelStatusBarSubSubBar);
+
+        jPanelStatusbar.add(jPanelStatusBarSubBar);
 
         getContentPane().add(jPanelStatusbar, java.awt.BorderLayout.SOUTH);
 
@@ -1145,7 +1195,7 @@ public class BQLabReportImporter extends javax.swing.JFrame {
             jDialogUpload.pack();
             jDialogUpload.setVisible(true);
         }else{
-            JOptionPane.showMessageDialog(new JFrame(), "Need to improt a PDF to upload.", "Dialog",JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(new JFrame(), "Need to import a PDF to upload.", "Dialog",JOptionPane.INFORMATION_MESSAGE);
         }
     }//GEN-LAST:event_jButtonUploadActionPerformed
 
@@ -1294,10 +1344,14 @@ public class BQLabReportImporter extends javax.swing.JFrame {
         sBQPassword=String.valueOf(jPasswordFieldBQPassword.getPassword());
         sToken="";
         get_login_token();
-        if(sToken.length()>0)
+        if(sToken.length()>0){
             JOptionPane.showMessageDialog(new JFrame(), "Successfully logged into BQ.com.", "Dialog",JOptionPane.INFORMATION_MESSAGE);
-        else
+            jLabelRESTAPIStatus.setBackground(new java.awt.Color(0,142, 0));
+        }
+        else{
             JOptionPane.showMessageDialog(new JFrame(), "Failed to log into BQ.com", "Dialog",JOptionPane.WARNING_MESSAGE);
+            jLabelRESTAPIStatus.setBackground(new java.awt.Color(255, 0, 0));
+        }
     }//GEN-LAST:event_jButtonTestDBConnectionActionPerformed
 
     private void jButtonGIMAPActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonGIMAPActionPerformed
@@ -1367,6 +1421,30 @@ public class BQLabReportImporter extends javax.swing.JFrame {
         // TODO add your handling code here:
         loadAutoDetectFiles();
     }//GEN-LAST:event_jMenuItemAutoDetectActionPerformed
+
+    private void jComboBoxUploadUserItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_jComboBoxUploadUserItemStateChanged
+        // TODO add your handling code here:
+        String[] sUserFields=jComboBoxUploadUser.getSelectedItem().toString().trim().split(" ");
+        String sText=sCurrentReport+"_";
+        if(sUserFields.length>=2){
+            sText+=sUserFields[0]+"_"+sUserFields[1].trim();
+        }else{
+            sText+=sUserFields[0];
+        }
+        String thisMoment = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+                                  .withZone(ZoneOffset.UTC)
+                                  .format(Instant.now());
+        String[] dateSplit=jTextFieldDateCollected.getText().split("/");
+        if(dateSplit.length==3){
+            if(dateSplit[0].length()==1)
+                dateSplit[0]="0"+dateSplit[0];
+            if(dateSplit[1].length()==1)
+                dateSplit[1]="0"+dateSplit[1];
+            thisMoment=dateSplit[2]+"_"+dateSplit[0]+"_"+dateSplit[1];
+        }
+        sText+="_"+thisMoment;        
+        jTextFieldUploadPanel.setText(sText);
+    }//GEN-LAST:event_jComboBoxUploadUserItemStateChanged
 
     /**
      * @param args the command line arguments
@@ -1574,9 +1652,11 @@ public class BQLabReportImporter extends javax.swing.JFrame {
         for(int i=0;i<jTablePDF.getRowCount();i++){
             String sLabMarker=jTablePDF.getValueAt(i,0).toString().trim();
             String sInternalMarker=jTablePDF.getValueAt(i,2).toString().trim();
-            if(!lab_to_internal_mappings.containsKey(sLabMarker)){
-                unfound_items.put(sLabMarker,sInternalMarker);
-                sUnfound+=sLabMarker+":"+sInternalMarker+"\n";
+            if(sLabMarker.length()>0 && sInternalMarker.length()>0){
+                if(!lab_to_internal_mappings.containsKey(sLabMarker)){
+                    unfound_items.put(sLabMarker,sInternalMarker);
+                    sUnfound+=sLabMarker+":"+sInternalMarker+"\n";
+                }
             }            
         }
         if(unfound_items.size()>0){
@@ -1734,13 +1814,15 @@ public class BQLabReportImporter extends javax.swing.JFrame {
     private javax.swing.JLabel jLabelMappingPDFSelector;
     private javax.swing.JLabel jLabelName;
     private javax.swing.JLabel jLabelPDF;
+    private javax.swing.JLabel jLabelRESTAPIStatus;
+    private javax.swing.JLabel jLabelRESTAPIStatusLabel;
     private javax.swing.JLabel jLabelRecordStatus;
     private javax.swing.JLabel jLabelStatus;
+    private javax.swing.JLabel jLabelTableStatus;
     private javax.swing.JLabel jLabelUploadUser;
     private javax.swing.JMenuBar jMenuBarMainMenu;
     private javax.swing.JMenu jMenuEdit;
     private javax.swing.JMenu jMenuFile;
-    private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JMenuItem jMenuItemAutoDetect;
     private javax.swing.JMenuItem jMenuItemCMEP;
     private javax.swing.JMenuItem jMenuItemDeleteCMEP;
@@ -1767,6 +1849,8 @@ public class BQLabReportImporter extends javax.swing.JFrame {
     private javax.swing.JPanel jPanelMappingMain;
     private javax.swing.JPanel jPanelMappingPDFSelector;
     private javax.swing.JPanel jPanelPDF;
+    private javax.swing.JPanel jPanelStatusBarSubBar;
+    private javax.swing.JPanel jPanelStatusBarSubSubBar;
     private javax.swing.JPanel jPanelStatusbar;
     private javax.swing.JPanel jPanelUploadButtons;
     private javax.swing.JPanel jPanelUploadInputs;
