@@ -475,7 +475,7 @@
                     <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
                   </AuxValues>
                 </Component>
-                <Component class="javax.swing.JLabel" name="jLabel2">
+                <Component class="javax.swing.JLabel" name="jLabelPanel">
                   <Properties>
                     <Property name="horizontalAlignment" type="int" value="4"/>
                     <Property name="text" type="java.lang.String" value="Panel"/>
@@ -486,7 +486,7 @@
                     <Property name="enabled" type="boolean" value="false"/>
                   </Properties>
                 </Component>
-                <Component class="javax.swing.JLabel" name="jLabel3">
+                <Component class="javax.swing.JLabel" name="jLabelDNAReportTemplace">
                   <Properties>
                     <Property name="horizontalAlignment" type="int" value="4"/>
                     <Property name="text" type="java.lang.String" value="DNA Report Template"/>
@@ -970,11 +970,6 @@
                 <Property name="alignment" type="int" value="2"/>
               </Layout>
               <SubComponents>
-                <Component class="javax.swing.JLabel" name="jLabelRESTAPIStatusLabel">
-                  <Properties>
-                    <Property name="text" type="java.lang.String" value="REST API Status:"/>
-                  </Properties>
-                </Component>
                 <Component class="javax.swing.JLabel" name="jLabelRESTAPIStatus">
                   <Properties>
                     <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
@@ -983,7 +978,7 @@
                     <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                       <Color blue="ff" green="ff" red="ff" type="rgb"/>
                     </Property>
-                    <Property name="text" type="java.lang.String" value="     "/>
+                    <Property name="text" type="java.lang.String" value="Token Refresh: 00:00:00"/>
                     <Property name="opaque" type="boolean" value="true"/>
                   </Properties>
                 </Component>

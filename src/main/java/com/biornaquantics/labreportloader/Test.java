@@ -21,6 +21,8 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap; 
 import java.util.List; 
 import java.util.Map; 
+import java.util.Timer;
+import java.util.TimerTask;
 import javax.imageio.ImageIO; 
  
 /** 
@@ -36,7 +38,9 @@ import org.json.JSONObject;
 
 public class Test { 
     public static void main(String[] args){ 
-        try{ 
+        System.out.println("Asdfa");
+        
+        /*try{ 
             List<JSONObject> pdf_location_mappings = BQJSONParser.parseJSONFile("D:\\BiornaQuantics\\pdf_mapping_CMEP.json");
             Map<String,String> lab_to_internal_mappings=BQJSONParser.parseLabToInternalMappingJSON("D:\\BiornaQuantics\\lab_to_internal_mapping_CMEP.json");
             String sFileWithPath="c:\\Users\\tihor\\Downloads\\CMEP_Lauren James_2018.09.07_Ariel Conant.pdf";
@@ -46,10 +50,10 @@ public class Test {
             for(String sKey:sTempMap.keySet())
                 System.out.println(sKey+":"+sTempMap.get(sKey));
             //File folder = new File("D:\\BiornaQuantics\\GI-MAP\\");
-            /*File folder = new File("d:\\BiornaQuantics\\GI-MAP\\");
+            File folder = new File("d:\\BiornaQuantics\\GI-MAP\\");
             File[] listOfFiles = folder.listFiles();
             for(int i=0;i<listOfFiles.length;i++){ 
-                if(i<4) 
+                if(i<0) 
                     continue;
                 //String sZZZ=listOfFiles[i].getAbsolutePath();
                 
@@ -59,15 +63,16 @@ public class Test {
                 //    System.out.println(sZZZ);
                 //}
                 //sTempMap=ExtractGIMAPData(listOfFiles[i].getAbsolutePath()); 
+                System.out.println(listOfFiles[i].getAbsolutePath());
                 System.out.println(PDFExtractor.ExtractPageText(listOfFiles[i].getAbsolutePath(),1));
                 //for(String key:sTempMap.keySet()) 
                 //    System.out.println(key+":"+sTempMap.get(key)); 
                 //if(i>5) 
                     //break; 
-            } */
+            } 
         }catch(IOException e){ 
             e.printStackTrace(); 
-        } 
+        } */
     } 
     public static Map<String,String> ExtractGIMAPData(String pdfFile) throws IOException{
         System.out.println(pdfFile); 

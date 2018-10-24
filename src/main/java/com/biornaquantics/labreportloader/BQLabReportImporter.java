@@ -29,6 +29,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Timer;
+import java.util.TimerTask;
 import javax.swing.DefaultCellEditor;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
@@ -56,7 +58,9 @@ import org.json.JSONObject;
  * @author tihor
  */
 public class BQLabReportImporter extends javax.swing.JFrame {
-    String sToken="";
+    long executeEvery=60*5*1000L;
+    Timer timer;
+    String sToken="",sRefreshToken="";
     Map<String,String> username_to_id_map=new HashMap<>();
     List<String> userNames=new ArrayList<>();
     List<String> internalMarkers=new ArrayList<>();
@@ -98,7 +102,17 @@ public class BQLabReportImporter extends javax.swing.JFrame {
             System.out.println(message);
             JOptionPane.showMessageDialog(new JFrame(), message, "Dialog",JOptionPane.ERROR_MESSAGE);
         }
-        get_login_token();
+        try{
+            get_login_token();
+        }catch(IOException e){
+            String message="IOException occured while loading BQ.com token.\n"+e.toString();
+            System.out.println(message);
+            JOptionPane.showMessageDialog(new JFrame(), message, "Dialog",JOptionPane.ERROR_MESSAGE);
+        }catch(RESTAPIException e){
+            String message="RESTAPI Exception occured while loading BQ.com Token.\n"+e.toString();
+            System.out.println(message);
+            JOptionPane.showMessageDialog(new JFrame(), message, "Dialog",JOptionPane.ERROR_MESSAGE);
+        }
         populate_markerKeys();
         internalMarkers.add(0,"");
         editInternalSlugBox=new Java2sAutoComboBox(internalMarkers);
@@ -119,10 +133,6 @@ public class BQLabReportImporter extends javax.swing.JFrame {
         sorter=new TableRowSorter<TableModel>(jTableMappingPDFToInternal.getModel());
         jTableMappingPDFToInternal.setRowSorter(sorter);
         
-        if(sToken.length()>0)
-            jLabelRESTAPIStatus.setBackground(new java.awt.Color(0,142, 0));
-        else
-            jLabelRESTAPIStatus.setBackground(new java.awt.Color(255,0, 0));
         jTablePDF.getModel().addTableModelListener(new TableModelListener() {
             @Override
             public void tableChanged(TableModelEvent tme) {
@@ -139,6 +149,34 @@ public class BQLabReportImporter extends javax.swing.JFrame {
             }
         });
         this.setTitle("Biorna Quantics Lab Report Importer");
+        TimerTask repeatedTask=new TimerTask() {
+            @Override
+            public void run() {
+                try{
+                    get_login_token();
+                }catch(IOException e){
+                    String message="IOException occured while loading BQ.com token.\n"+e.toString();
+                    System.out.println(message);
+                    JOptionPane.showMessageDialog(new JFrame(), message, "Dialog",JOptionPane.ERROR_MESSAGE);
+                    cancel();
+                }catch(RESTAPIException e){
+                    String message="RESTAPI Exception occured while loading BQ.com Token.\n"+e.toString();
+                    System.out.println(message);
+                    JOptionPane.showMessageDialog(new JFrame(), message, "Dialog",JOptionPane.ERROR_MESSAGE);
+                    cancel();
+                }
+                String thisMoment = DateTimeFormatter.ofPattern("HH:mm:ss")
+                                  .withZone(ZoneOffset.systemDefault())
+                                  .format(Instant.now());
+                jLabelRESTAPIStatus.setText("Token Refresh: "+thisMoment);
+                if(sToken.length()>0)
+                    jLabelRESTAPIStatus.setBackground(new java.awt.Color(0,142, 0));
+                else
+                    jLabelRESTAPIStatus.setBackground(new java.awt.Color(255,0, 0));
+            }
+        };
+        timer=new Timer("tokenRefresh");
+        timer.scheduleAtFixedRate(repeatedTask,1000L,executeEvery);
     }
 
     /**
@@ -205,9 +243,9 @@ public class BQLabReportImporter extends javax.swing.JFrame {
         jPanelUploadInputs = new javax.swing.JPanel();
         jLabelUploadUser = new javax.swing.JLabel();
         jComboBoxUploadUser = new Java2sAutoComboBox(userNames);
-        jLabel2 = new javax.swing.JLabel();
+        jLabelPanel = new javax.swing.JLabel();
         jTextFieldUploadPanel = new javax.swing.JTextField();
-        jLabel3 = new javax.swing.JLabel();
+        jLabelDNAReportTemplace = new javax.swing.JLabel();
         jTextFieldUploadReportTemplate = new javax.swing.JTextField();
         jPanelUploadButtons = new javax.swing.JPanel();
         jButtonUploadSave = new javax.swing.JButton();
@@ -244,7 +282,6 @@ public class BQLabReportImporter extends javax.swing.JFrame {
         jPanelStatusBarSubBar = new javax.swing.JPanel();
         jLabelTableStatus = new javax.swing.JLabel();
         jPanelStatusBarSubSubBar = new javax.swing.JPanel();
-        jLabelRESTAPIStatusLabel = new javax.swing.JLabel();
         jLabelRESTAPIStatus = new javax.swing.JLabel();
         jMenuBarMainMenu = new javax.swing.JMenuBar();
         jMenuFile = new javax.swing.JMenu();
@@ -525,16 +562,16 @@ public class BQLabReportImporter extends javax.swing.JFrame {
         });
         jPanelUploadInputs.add(jComboBoxUploadUser);
 
-        jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        jLabel2.setText("Panel");
-        jPanelUploadInputs.add(jLabel2);
+        jLabelPanel.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        jLabelPanel.setText("Panel");
+        jPanelUploadInputs.add(jLabelPanel);
 
         jTextFieldUploadPanel.setEnabled(false);
         jPanelUploadInputs.add(jTextFieldUploadPanel);
 
-        jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        jLabel3.setText("DNA Report Template");
-        jPanelUploadInputs.add(jLabel3);
+        jLabelDNAReportTemplace.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        jLabelDNAReportTemplace.setText("DNA Report Template");
+        jPanelUploadInputs.add(jLabelDNAReportTemplace);
         jPanelUploadInputs.add(jTextFieldUploadReportTemplate);
 
         jPanelUploadPane.add(jPanelUploadInputs, java.awt.BorderLayout.CENTER);
@@ -774,12 +811,9 @@ public class BQLabReportImporter extends javax.swing.JFrame {
 
         jPanelStatusBarSubSubBar.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT));
 
-        jLabelRESTAPIStatusLabel.setText("REST API Status:");
-        jPanelStatusBarSubSubBar.add(jLabelRESTAPIStatusLabel);
-
         jLabelRESTAPIStatus.setBackground(new java.awt.Color(255, 0, 0));
         jLabelRESTAPIStatus.setForeground(new java.awt.Color(255, 255, 255));
-        jLabelRESTAPIStatus.setText("     ");
+        jLabelRESTAPIStatus.setText("Token Refresh: 00:00:00");
         jLabelRESTAPIStatus.setOpaque(true);
         jPanelStatusBarSubSubBar.add(jLabelRESTAPIStatus);
 
@@ -923,7 +957,9 @@ public class BQLabReportImporter extends javax.swing.JFrame {
 
     private void jMenuItemExitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemExitActionPerformed
         // TODO add your handling code here:
+        timer.cancel();
         System.exit(0);
+        
     }//GEN-LAST:event_jMenuItemExitActionPerformed
 
     private void jMenuItemCMEPActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemCMEPActionPerformed
@@ -1045,6 +1081,7 @@ public class BQLabReportImporter extends javax.swing.JFrame {
             System.out.println(message);
             JOptionPane.showMessageDialog(new JFrame(), message, "Dialog",JOptionPane.ERROR_MESSAGE);
         }
+        timer.cancel();
     }//GEN-LAST:event_formWindowClosing
 
     private void jButtonCloseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCloseActionPerformed
@@ -1349,7 +1386,18 @@ public class BQLabReportImporter extends javax.swing.JFrame {
         sBQEmail=jTextFieldBQEmail.getText();
         sBQPassword=String.valueOf(jPasswordFieldBQPassword.getPassword());
         sToken="";
-        get_login_token();
+        sRefreshToken="";
+        try{
+            get_login_token();
+        }catch(IOException e){
+            String message="IOException occured while loading BQ.com token.\n"+e.toString();
+            System.out.println(message);
+            JOptionPane.showMessageDialog(new JFrame(), message, "Dialog",JOptionPane.ERROR_MESSAGE);
+        }catch(RESTAPIException e){
+            String message="RESTAPI Exception occured while loading BQ.com Token.\n"+e.toString();
+            System.out.println(message);
+            JOptionPane.showMessageDialog(new JFrame(), message, "Dialog",JOptionPane.ERROR_MESSAGE);
+        }
         if(sToken.length()>0){
             JOptionPane.showMessageDialog(new JFrame(), "Successfully logged into BQ.com.", "Dialog",JOptionPane.INFORMATION_MESSAGE);
             jLabelRESTAPIStatus.setBackground(new java.awt.Color(0,142, 0));
@@ -1486,29 +1534,21 @@ public class BQLabReportImporter extends javax.swing.JFrame {
             }
         });
     }
-    private void get_login_token(){
-        try{
-            Map<String,Object> payload=new HashMap<>();
-            payload.put("email",sBQEmail);
-            payload.put("password", sBQPassword);
-            Map<String,String> headers=new HashMap<>();
-            headers.put("Accept", "application/json");
-            headers.put("Content-type", "application/json");
-            headers.put("origin","https://lab.biorna-quantics.com");
-            //JSONObject returnObject=RESTAPIFunctions.http_post("https://staging-api.biorna-quantics.com/api/v1/auth", headers, payload);
-            JSONObject returnObject=RESTAPIFunctions.http_post(restAPIURLs.login_token, headers, payload);
-            if(returnObject.length()>0)
-                sToken=returnObject.get("token").toString();
-            else
-                sToken="";
-        }catch(IOException e){
-            String message="IOException occured while loading BQ.comtoken.\n"+e.toString();
-            System.out.println(message);
-            JOptionPane.showMessageDialog(new JFrame(), message, "Dialog",JOptionPane.ERROR_MESSAGE);
-        }catch(RESTAPIException e){
-            String message="RESTAPI Exception occured while loading BQ.com Token.\n"+e.toString();
-            System.out.println(message);
-            JOptionPane.showMessageDialog(new JFrame(), message, "Dialog",JOptionPane.ERROR_MESSAGE);
+    private void get_login_token() throws IOException,RESTAPIException{
+        sToken="";
+        sRefreshToken="";
+        Map<String,Object> payload=new HashMap<>();
+        payload.put("email",sBQEmail);
+        payload.put("password", sBQPassword);
+        Map<String,String> headers=new HashMap<>();
+        headers.put("Accept", "application/json");
+        headers.put("Content-type", "application/json");
+        headers.put("origin","https://lab.biorna-quantics.com");
+        //JSONObject returnObject=RESTAPIFunctions.http_post("https://staging-api.biorna-quantics.com/api/v1/auth", headers, payload);
+        JSONObject returnObject=RESTAPIFunctions.http_post(restAPIURLs.login_token, headers, payload);
+        if(returnObject.length()>0){
+            sToken=returnObject.get("token").toString();
+            sRefreshToken=returnObject.get("refreshToken").toString();
         }
     }
     private void populate_markerKeys(){
@@ -1537,7 +1577,7 @@ public class BQLabReportImporter extends javax.swing.JFrame {
             System.out.println(message);
             JOptionPane.showMessageDialog(new JFrame(), message, "Dialog",JOptionPane.ERROR_MESSAGE);
         }catch(RESTAPIException e){
-            String message="RESTAPIException occured while loading list of users.\n"+e.toString();
+            String message="RESTAPIException occured while loading lab markers.\n"+e.toString();
             System.out.println(message);
             JOptionPane.showMessageDialog(new JFrame(), message, "Dialog",JOptionPane.ERROR_MESSAGE);
         }
@@ -1806,13 +1846,12 @@ public class BQLabReportImporter extends javax.swing.JFrame {
     private javax.swing.JDialog jDialogMapping;
     private javax.swing.JDialog jDialogSettings;
     private javax.swing.JDialog jDialogUpload;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabelAutoDetectDirectory;
     private javax.swing.JLabel jLabelBQEmail;
     private javax.swing.JLabel jLabelBQPassword;
     private javax.swing.JLabel jLabelCMEPDirectory;
     private javax.swing.JLabel jLabelCMEPPDFMapping;
+    private javax.swing.JLabel jLabelDNAReportTemplace;
     private javax.swing.JLabel jLabelDateCollected;
     private javax.swing.JLabel jLabelGIMAPDirectory;
     private javax.swing.JLabel jLabelIgG4Directory;
@@ -1820,8 +1859,8 @@ public class BQLabReportImporter extends javax.swing.JFrame {
     private javax.swing.JLabel jLabelMappingPDFSelector;
     private javax.swing.JLabel jLabelName;
     private javax.swing.JLabel jLabelPDF;
+    private javax.swing.JLabel jLabelPanel;
     private javax.swing.JLabel jLabelRESTAPIStatus;
-    private javax.swing.JLabel jLabelRESTAPIStatusLabel;
     private javax.swing.JLabel jLabelRecordStatus;
     private javax.swing.JLabel jLabelStatus;
     private javax.swing.JLabel jLabelTableStatus;

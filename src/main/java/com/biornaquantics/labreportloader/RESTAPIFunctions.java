@@ -39,7 +39,10 @@ public final class RESTAPIFunctions {
             int statusCode=response.getStatusLine().getStatusCode();
             if(statusCode>=200 && statusCode<300){
                 returnObject=parseResponseAsJSON(response);
-            }else{
+            }else if(statusCode==401){
+                throw new RESTAPISessionExpiredException(statusCode+": "+response.getStatusLine().getReasonPhrase());
+            }
+            else{
                 throw new RESTAPIException(statusCode+": "+response.getStatusLine().getReasonPhrase());
             }
         }catch(IOException e){
@@ -58,6 +61,8 @@ public final class RESTAPIFunctions {
             int statusCode=response.getStatusLine().getStatusCode();
             if(statusCode>=200 && statusCode<300){
                 returnObject=parseResponseAsJSON(response);
+            }else if(statusCode==401){
+                throw new RESTAPISessionExpiredException(statusCode+": "+response.getStatusLine().getReasonPhrase());
             }else{
                 throw new RESTAPIException(statusCode+": "+response.getStatusLine().getReasonPhrase());
             }
@@ -74,7 +79,6 @@ public final class RESTAPIFunctions {
     public static final String parseResponseAsString(CloseableHttpResponse response) throws IOException{
         BufferedReader rd = new BufferedReader(
             new InputStreamReader(response.getEntity().getContent()));
-
             StringBuffer result = new StringBuffer();
             String line = "";
             while ((line = rd.readLine()) != null) {
