@@ -17,7 +17,7 @@ import javax.swing.JOptionPane;
  * @author tihor
  */
 public final class RestAPIURLs {
-    public static String new_panel_creation,add_measurements_to_panel,login_token,refresh_token,internal_marker_keys,user_details;
+    public static String new_panel_creation,add_measurements_to_panel,login_token,refresh_token,internal_marker_keys,user_details,new_user_creation;
     public RestAPIURLs() throws IOException{
         Properties prop=new Properties();
         InputStream input = null;        
@@ -29,5 +29,6 @@ public final class RestAPIURLs {
         refresh_token=prop.getProperty("refresh_token");
         internal_marker_keys=prop.getProperty("internal_marker_keys");
         user_details=prop.getProperty("user_details");
+        new_user_creation=prop.getProperty("new_user_creation");
     }
 }
