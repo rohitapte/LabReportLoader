@@ -255,6 +255,27 @@ public class BQLabReportImporter extends javax.swing.JFrame {
         jPanelUploadStatus = new javax.swing.JPanel();
         jScrollPaneUploadStatus = new javax.swing.JScrollPane();
         jTextAreaUploadStatus = new javax.swing.JTextArea();
+        jDialogNewUser = new javax.swing.JDialog();
+        jLabelNewUserFirstName = new javax.swing.JLabel();
+        jTextFieldNewUserFirstName = new javax.swing.JTextField();
+        jLabelNewUserLastName = new javax.swing.JLabel();
+        jTextFieldNewUserLastName = new javax.swing.JTextField();
+        jLabelNewUserEmail = new javax.swing.JLabel();
+        jTextFieldNewUserEmail = new javax.swing.JTextField();
+        jLabelNewUserBirthDate = new javax.swing.JLabel();
+        jTextFieldNewUserBirthDate = new javax.swing.JTextField();
+        jLabelNewUserPhoneNumber = new javax.swing.JLabel();
+        jTextFieldNewUserPhoneNumber = new javax.swing.JTextField();
+        jLabelNewUserGender = new javax.swing.JLabel();
+        jComboBoxNewUserGender = new javax.swing.JComboBox<>();
+        jLabelNewUserRole = new javax.swing.JLabel();
+        jComboBoxNewUserRole = new javax.swing.JComboBox<>();
+        jLabelNewUserStatus = new javax.swing.JLabel();
+        jComboBoxNewUserStatus = new javax.swing.JComboBox<>();
+        jPanel1 = new javax.swing.JPanel();
+        jPanel2 = new javax.swing.JPanel();
+        jButtonNewUserSave = new javax.swing.JButton();
+        jButtonNewUserClose = new javax.swing.JButton();
         jPanelMain = new javax.swing.JPanel();
         jPanelPDF = new javax.swing.JPanel();
         jToolBarRecordParser = new javax.swing.JToolBar();
@@ -291,6 +312,7 @@ public class BQLabReportImporter extends javax.swing.JFrame {
         jMenuEdit = new javax.swing.JMenu();
         jMenuItemSettings = new javax.swing.JMenuItem();
         jMenuItemMappings = new javax.swing.JMenuItem();
+        jMenuItemNewUser = new javax.swing.JMenuItem();
         jMenuLabReports = new javax.swing.JMenu();
         jMenuItemAutoDetect = new javax.swing.JMenuItem();
         jMenuItemCMEP = new javax.swing.JMenuItem();
@@ -610,6 +632,78 @@ public class BQLabReportImporter extends javax.swing.JFrame {
 
         jDialogUpload.getContentPane().add(jPanelUploadStatus, java.awt.BorderLayout.SOUTH);
 
+        jDialogNewUser.setTitle("New User");
+        jDialogNewUser.getContentPane().setLayout(new java.awt.GridLayout(9, 2));
+
+        jLabelNewUserFirstName.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
+        jLabelNewUserFirstName.setText("First Name:");
+        jDialogNewUser.getContentPane().add(jLabelNewUserFirstName);
+        jDialogNewUser.getContentPane().add(jTextFieldNewUserFirstName);
+
+        jLabelNewUserLastName.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
+        jLabelNewUserLastName.setText("Last Name:");
+        jDialogNewUser.getContentPane().add(jLabelNewUserLastName);
+        jDialogNewUser.getContentPane().add(jTextFieldNewUserLastName);
+
+        jLabelNewUserEmail.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
+        jLabelNewUserEmail.setText("Email:");
+        jDialogNewUser.getContentPane().add(jLabelNewUserEmail);
+        jDialogNewUser.getContentPane().add(jTextFieldNewUserEmail);
+
+        jLabelNewUserBirthDate.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
+        jLabelNewUserBirthDate.setText("Birth Date:");
+        jDialogNewUser.getContentPane().add(jLabelNewUserBirthDate);
+        jDialogNewUser.getContentPane().add(jTextFieldNewUserBirthDate);
+
+        jLabelNewUserPhoneNumber.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
+        jLabelNewUserPhoneNumber.setText("Phone Number:");
+        jDialogNewUser.getContentPane().add(jLabelNewUserPhoneNumber);
+        jDialogNewUser.getContentPane().add(jTextFieldNewUserPhoneNumber);
+
+        jLabelNewUserGender.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
+        jLabelNewUserGender.setText("Gender:");
+        jDialogNewUser.getContentPane().add(jLabelNewUserGender);
+
+        jComboBoxNewUserGender.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Male", "Female" }));
+        jDialogNewUser.getContentPane().add(jComboBoxNewUserGender);
+
+        jLabelNewUserRole.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
+        jLabelNewUserRole.setText("Role:");
+        jDialogNewUser.getContentPane().add(jLabelNewUserRole);
+
+        jComboBoxNewUserRole.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "customer", "admin", "editor", "manager" }));
+        jComboBoxNewUserRole.setEnabled(false);
+        jDialogNewUser.getContentPane().add(jComboBoxNewUserRole);
+
+        jLabelNewUserStatus.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
+        jLabelNewUserStatus.setText("Status:");
+        jDialogNewUser.getContentPane().add(jLabelNewUserStatus);
+
+        jComboBoxNewUserStatus.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "guest", "pending", "verified", "banned", "deleted" }));
+        jComboBoxNewUserStatus.setEnabled(false);
+        jDialogNewUser.getContentPane().add(jComboBoxNewUserStatus);
+        jDialogNewUser.getContentPane().add(jPanel1);
+
+        jPanel2.setLayout(new java.awt.GridLayout(1, 0));
+
+        jButtonNewUserSave.setText("Save");
+        jButtonNewUserSave.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonNewUserSaveActionPerformed(evt);
+            }
+        });
+        jPanel2.add(jButtonNewUserSave);
+
+        jButtonNewUserClose.setText("Close");
+        jButtonNewUserClose.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonNewUserCloseActionPerformed(evt);
+            }
+        });
+        jPanel2.add(jButtonNewUserClose);
+
+        jDialogNewUser.getContentPane().add(jPanel2);
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         addComponentListener(new java.awt.event.ComponentAdapter() {
             public void componentResized(java.awt.event.ComponentEvent evt) {
@@ -854,6 +948,14 @@ public class BQLabReportImporter extends javax.swing.JFrame {
             }
         });
         jMenuEdit.add(jMenuItemMappings);
+
+        jMenuItemNewUser.setText("New User");
+        jMenuItemNewUser.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItemNewUserActionPerformed(evt);
+            }
+        });
+        jMenuEdit.add(jMenuItemNewUser);
 
         jMenuBarMainMenu.add(jMenuEdit);
 
@@ -1503,6 +1605,82 @@ public class BQLabReportImporter extends javax.swing.JFrame {
         jTextFieldUploadPanel.setText(sText);
     }//GEN-LAST:event_jComboBoxUploadUserItemStateChanged
 
+    private void jMenuItemNewUserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemNewUserActionPerformed
+        // TODO add your handling code here:
+        jTextFieldNewUserEmail.setText("                                                                                    ");
+        jDialogNewUser.pack();
+        jTextFieldNewUserFirstName.setText("");
+        jTextFieldNewUserLastName.setText("");
+        jTextFieldNewUserEmail.setText("noone@nowhere.com");
+        jTextFieldNewUserBirthDate.setText("");
+        jTextFieldNewUserPhoneNumber.setText("");
+        jComboBoxNewUserGender.setSelectedIndex(0);
+        jComboBoxNewUserRole.setSelectedIndex(0);
+        jComboBoxNewUserStatus.setSelectedIndex(0);
+        jDialogNewUser.setVisible(true);
+    }//GEN-LAST:event_jMenuItemNewUserActionPerformed
+
+    private void jButtonNewUserCloseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonNewUserCloseActionPerformed
+        // TODO add your handling code here:
+        jDialogNewUser.setVisible(false);
+    }//GEN-LAST:event_jButtonNewUserCloseActionPerformed
+
+    private void jButtonNewUserSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonNewUserSaveActionPerformed
+        // TODO add your handling code here:
+        try{
+            String thisMoment = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+                                  .withZone(ZoneOffset.UTC)
+                                  .format(Instant.now());
+            String[] dateSplit=jTextFieldNewUserBirthDate.getText().split("/");
+            if(dateSplit.length==3){
+                if(dateSplit[0].length()==1)
+                    dateSplit[0]="0"+dateSplit[0];
+                if(dateSplit[1].length()==1)
+                    dateSplit[1]="0"+dateSplit[1];
+                thisMoment=dateSplit[2]+"-"+dateSplit[0]+"-"+dateSplit[1];
+            }
+            thisMoment+="T00:00:00.000Z";
+            
+            Map<String,String> headers=new HashMap<>();
+            headers.put("Accept", "application/json");
+            headers.put("Content-type", "application/json");
+            headers.put("origin","https://lab.biorna-quantics.com");
+            headers.put("authorization","Bearer "+sToken);
+            
+            Map<String,Object> parameters=new HashMap<>();
+            parameters.put("firstName",jTextFieldNewUserFirstName.getText());
+            parameters.put("lastName",jTextFieldNewUserLastName.getText());
+            parameters.put("email",jTextFieldNewUserEmail.getText());
+            //parameters.put("birthday",jTextFieldNewUserBirthDate.getText());
+            parameters.put("birthday",thisMoment);
+            parameters.put("phone",jTextFieldNewUserPhoneNumber.getText());
+            parameters.put("gender",jComboBoxNewUserGender.getSelectedItem().toString());
+            parameters.put("role",jComboBoxNewUserRole.getSelectedItem().toString());
+            parameters.put("status",jComboBoxNewUserStatus.getSelectedItem().toString());
+            Map<String,String> address=new HashMap<>();
+            parameters.put("shippingAddress",address);
+            parameters.put("billingAddress",address);
+            Map<String,String> clinic=new HashMap<>();
+            clinic.put("title","");
+            clinic.put("phone","");
+            parameters.put("clinic",clinic);
+            JSONObject returnObject=RESTAPIFunctions.http_post(restAPIURLs.new_user_creation, headers, parameters);
+            if(returnObject.length()>0){
+                System.out.println("New User created");
+            }else{
+                System.out.println("Failed to create new user");
+            }
+        }catch(IOException e){
+            String message="IOException occured while uploading data to BQ.com.\n"+e.toString();
+            System.out.println(message);
+            JOptionPane.showMessageDialog(new JFrame(), message, "Dialog",JOptionPane.ERROR_MESSAGE);
+        }catch(RESTAPIException e){
+            String message="RESTAPIException occured while uploading data to BQ.com.\n"+e.toString();
+            System.out.println(message);
+            JOptionPane.showMessageDialog(new JFrame(), message, "Dialog",JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_jButtonNewUserSaveActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -1836,6 +2014,8 @@ public class BQLabReportImporter extends javax.swing.JFrame {
     private javax.swing.JButton jButtonLast;
     private javax.swing.JButton jButtonMappingClose;
     private javax.swing.JButton jButtonMappingSave;
+    private javax.swing.JButton jButtonNewUserClose;
+    private javax.swing.JButton jButtonNewUserSave;
     private javax.swing.JButton jButtonNext;
     private javax.swing.JButton jButtonPrevious;
     private javax.swing.JButton jButtonSave;
@@ -1844,9 +2024,13 @@ public class BQLabReportImporter extends javax.swing.JFrame {
     private javax.swing.JButton jButtonUpload;
     private javax.swing.JButton jButtonUploadClose;
     private javax.swing.JButton jButtonUploadSave;
+    private javax.swing.JComboBox<String> jComboBoxNewUserGender;
+    private javax.swing.JComboBox<String> jComboBoxNewUserRole;
+    private javax.swing.JComboBox<String> jComboBoxNewUserStatus;
     private javax.swing.JComboBox<String> jComboBoxPDFMappingSelector;
     private javax.swing.JComboBox<String> jComboBoxUploadUser;
     private javax.swing.JDialog jDialogMapping;
+    private javax.swing.JDialog jDialogNewUser;
     private javax.swing.JDialog jDialogSettings;
     private javax.swing.JDialog jDialogUpload;
     private javax.swing.JLabel jLabelAutoDetectDirectory;
@@ -1861,6 +2045,14 @@ public class BQLabReportImporter extends javax.swing.JFrame {
     private javax.swing.JLabel jLabelLabToInternalMarker;
     private javax.swing.JLabel jLabelMappingPDFSelector;
     private javax.swing.JLabel jLabelName;
+    private javax.swing.JLabel jLabelNewUserBirthDate;
+    private javax.swing.JLabel jLabelNewUserEmail;
+    private javax.swing.JLabel jLabelNewUserFirstName;
+    private javax.swing.JLabel jLabelNewUserGender;
+    private javax.swing.JLabel jLabelNewUserLastName;
+    private javax.swing.JLabel jLabelNewUserPhoneNumber;
+    private javax.swing.JLabel jLabelNewUserRole;
+    private javax.swing.JLabel jLabelNewUserStatus;
     private javax.swing.JLabel jLabelPDF;
     private javax.swing.JLabel jLabelPanel;
     private javax.swing.JLabel jLabelRESTAPIStatus;
@@ -1881,8 +2073,11 @@ public class BQLabReportImporter extends javax.swing.JFrame {
     private javax.swing.JMenuItem jMenuItemInsertCMEP;
     private javax.swing.JMenuItem jMenuItemInsertPDF;
     private javax.swing.JMenuItem jMenuItemMappings;
+    private javax.swing.JMenuItem jMenuItemNewUser;
     private javax.swing.JMenuItem jMenuItemSettings;
     private javax.swing.JMenu jMenuLabReports;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanelAutoDetectDirectory;
     private javax.swing.JPanel jPanelButtons;
     private javax.swing.JPanel jPanelCMEPDirectory;
@@ -1923,6 +2118,11 @@ public class BQLabReportImporter extends javax.swing.JFrame {
     private javax.swing.JTextField jTextFieldIgG4Directory;
     private javax.swing.JTextField jTextFieldLabToInternalMarker;
     private javax.swing.JTextField jTextFieldName;
+    private javax.swing.JTextField jTextFieldNewUserBirthDate;
+    private javax.swing.JTextField jTextFieldNewUserEmail;
+    private javax.swing.JTextField jTextFieldNewUserFirstName;
+    private javax.swing.JTextField jTextFieldNewUserLastName;
+    private javax.swing.JTextField jTextFieldNewUserPhoneNumber;
     private javax.swing.JTextField jTextFieldUploadPanel;
     private javax.swing.JTextField jTextFieldUploadReportTemplate;
     private javax.swing.JToolBar jToolBarLoaderButtons;
