@@ -1070,6 +1070,7 @@ public class BQLabReportImporter extends javax.swing.JFrame {
             prop.setProperty("pdf_to_internal",sPDFToInternal);
             prop.setProperty("BQEmail", sBQEmail);
             prop.setProperty("BQPassword", sBQPassword);
+            prop.setProperty("TokenPrefix", sTokenPrefix);
 
             // save properties to project root folder
             prop.store(output, null);
