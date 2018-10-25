@@ -69,7 +69,7 @@ public class BQLabReportImporter extends javax.swing.JFrame {
     PDDocument document=null;
     PDFRenderer renderer=null;
     private float RENDER_DPI=200;
-    String sAutoDetectLocation="",sCMEPLocation="",sIgG4Location="",sGIMAPLocation="",sCMEPToPDFLocation="",sBQEmail="",sBQPassword="",sPDFToInternal="";
+    String sAutoDetectLocation="",sCMEPLocation="",sIgG4Location="",sGIMAPLocation="",sCMEPToPDFLocation="",sBQEmail="",sBQPassword="",sPDFToInternal="",sTokenPrefix="";
     Java2sAutoComboBox editInternalSlugBox,editLabReportBox;
     String sCurrentReport="";
     List<JSONObject> pdf_location_mappings;
@@ -96,6 +96,8 @@ public class BQLabReportImporter extends javax.swing.JFrame {
             sPDFToInternal=prop.getProperty("pdf_to_internal");
             sBQEmail=prop.getProperty("BQEmail");
             sBQPassword=prop.getProperty("BQPassword");
+            sTokenPrefix=prop.getProperty("TokenPrefix");
+            
             RestAPIURLs restAPIURLs=new RestAPIURLs();
         }catch(IOException e){
             String message="Error loading properties file.\n"+e.toString();
