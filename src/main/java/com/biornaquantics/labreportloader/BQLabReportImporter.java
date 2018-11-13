@@ -58,6 +58,11 @@ import org.json.JSONObject;
  * @author tihor
  */
 public class BQLabReportImporter extends javax.swing.JFrame {
+    /*-----------------------------------------
+    this is for encryption and decryption only!!!!!!!!!!!!!!!!
+    remove this when we go live!!!!!!!!!!!!!!!!*/
+    String[] sExceptions={"jani_siivola@hotmail.com","amandajcassell@rhyta.com","talhazahidch@gmail.com","reimon1972@gmail.com"};
+    /*-----------------------------------------*/
     long executeEvery=60*5*1000L;
     Timer timer;
     String sToken="",sRefreshToken="";
@@ -1767,8 +1772,7 @@ public class BQLabReportImporter extends javax.swing.JFrame {
         try{
             Map<String,String> headers=new HashMap<>();
             headers.put("Accept", "application/json");
-            headers.put("Content-type", "application/json");
-            
+            headers.put("Content-type", "application/json");            
             headers.put("authorization","Bearer "+sToken);
             //JSONObject returnValue=RESTAPIFunctions.http_get("https://staging-api.biorna-quantics.com/api/v1/list/users?sort=firstName%20ASC&skip=NaN&select=firstName,lastName,email",headers);
             JSONObject returnValue=RESTAPIFunctions.http_get(restAPIURLs.user_details,headers);
@@ -1779,7 +1783,26 @@ public class BQLabReportImporter extends javax.swing.JFrame {
                 if(jsonArray!=null){
                     for(int i=0;i<jsonArray.length();i++){
                         JSONObject obj=jsonArray.getJSONObject(i);
-                        String sName=obj.getString("firstName")+" "+obj.getString("lastName")+" ("+obj.get("email")+")";
+                        String sEmail=obj.get("email").toString();
+                        String sFirstName=obj.getString("firstName").toString();
+                        String sLastName=obj.getString("lastName").toString();
+                        /*-----------------------------------------
+                        this is for encryption and decryption only!!!!!!!!!!!!!!!!
+                        remove this when we go live!!!!!!!!!!!!!!!!*/
+                        boolean bDecrypt=true;
+                        if(sEmail.contains("biorna-quantics.com"))
+                                bDecrypt=false;
+                        for(int j=0;j<sExceptions.length;j++){
+                            if(sEmail.equals(sExceptions[j]))
+                                bDecrypt=false;
+                        }
+                        if(bDecrypt){
+                            sEmail=CaesarCipher.decrypt(sEmail);
+                            sFirstName=CaesarCipher.decrypt(sFirstName);
+                            sLastName=CaesarCipher.decrypt(sLastName);
+                        }
+                        /*-----------------------------------------*/                        
+                        String sName=sFirstName+" "+sLastName+" ("+sEmail+")";
                          username_to_id_map.put(sName,obj.getString("id"));
                         userNames.add(sName);
                     }

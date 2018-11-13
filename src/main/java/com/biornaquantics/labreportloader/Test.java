@@ -38,8 +38,22 @@ import org.json.JSONObject;
 
 public class Test { 
     public static void main(String[] args){ 
-        System.out.println("Asdfa");
-        
+        org.apache.commons.text.similarity.LevenshteinDistance distance=new org.apache.commons.text.similarity.LevenshteinDistance();
+        String[] firstnames={"Alan","Alex","Alex","Ariel","Biorna","Carlos","ertyert","Hemlata","Jack","Jani","Jani-Test","Justin","Ken","LESLEY","Mark","Nastassia","Nic","Ollie","Ollie","Oluwademilade","Ramon","Ramon","Redd","Rohit","RohitAAA","Samson","Talha","TEST - Oli","Todd","Todd"};
+        String[] lastnames={"Patrick","Maguidad","Chan","Conant","Team","Galadi","ewtert","Bisnanuthsing","Parker-Pohl","Siivola","Siivola","Gregory","Chu","LEE","Leung","law","Tang","Graham","Graham","Oyebanji","Julia","Julia Chias","Baluyos","Apte","RohitBBB","Wai","Zahidch","Goulden","Scott","Admin"};
+        String sFirst="ertyert";
+        String sLast="ewtert";
+        int iClosestIndex=-1;
+        int minDistance=10000;
+        for(int i=0;i<firstnames.length;i++){
+            int d=distance.apply(sFirst,firstnames[i])+distance.apply(sLast,lastnames[i]);
+            //System.out.println("Distance: "+d+" Firstname:"+firstnames[i]+" Lastname:"+lastnames[i]);
+            if(d<minDistance){
+                 minDistance=d;
+                 iClosestIndex=i;
+            }
+        }
+        System.out.println("Index:" + iClosestIndex+" Distance: "+minDistance+" Firstname:"+firstnames[iClosestIndex]+" Lastname:"+lastnames[iClosestIndex]);
         /*try{ 
             List<JSONObject> pdf_location_mappings = BQJSONParser.parseJSONFile("D:\\BiornaQuantics\\pdf_mapping_CMEP.json");
             Map<String,String> lab_to_internal_mappings=BQJSONParser.parseLabToInternalMappingJSON("D:\\BiornaQuantics\\lab_to_internal_mapping_CMEP.json");
